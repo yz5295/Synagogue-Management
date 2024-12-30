@@ -1,0 +1,73 @@
+.prayer-times-container {
+  padding: 18px;
+  overflow: hidden;
+}
+
+.scrolling-content {
+  animation: scrollVertical 10s linear infinite;
+}
+
+@keyframes scrollVertical {
+  0% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.ant-typography.title {
+  font-size: 1.5rem;
+  margin: 5px 0;
+  text-align: center;
+  font-weight: bold;
+  color: #333333;
+}
+
+.ant-typography.text {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  text-align: center;
+  color: #555555;
+  margin: 3px 0;
+}
+
+.ant-typography:hover {
+  transform: scale(1.03);
+  opacity: 0.95;
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+.scrolling-content {
+  max-height: 400px;
+}
+
+.section-title {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.prayer-title {
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: #222222;
+  margin: 17px 0;
+}
+
+.spinner {
+  font-size: 1.5rem;
+  color: #333;
+}
+@media (max-width: 768px) {
+  .scrolling-content {
+    animation: none !important; /* מבטל את האנימציה */
+  }
+}

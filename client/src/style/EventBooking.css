@@ -1,0 +1,29 @@
+/* body {
+  direction: rtl;
+  text-align: right;
+}
+
+.event-booking {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+.form-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.form-left,
+.form-right {
+  width: 45%;
+}
+
+.unavailable-date {
+  background-color: #ffcccc !important;
+  color: #000 !important;
+} */
+.ant-form-item-explain {
+  position: absolute;
+  margin-top: -5px; /* מונע דחיפת הפריסה */
+}

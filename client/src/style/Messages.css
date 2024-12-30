@@ -1,0 +1,32 @@
+.message-card {
+  transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+}
+
+.message-card.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.message-card.fade-out {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.message-title {
+  font-size: 36px;
+  color: #333333;
+  margin-bottom: 10px;
+}
+
+.message-content {
+  font-size: 33px;
+  font-weight: 700;
+  color: #282222;
+  padding: 20px;
+}
+
+.loading,
+.no-messages {
+  font-size: 24px;
+  color: #888888;
+}

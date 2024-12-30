@@ -1,0 +1,28 @@
+.box {
+  position: relative;
+  overflow: hidden;
+  height: 200px;
+  width: 100%;
+}
+
+.zmani {
+  animation: scrollVertical 20s linear infinite;
+  display: inline-block;
+}
+
+@keyframes scrollVertical {
+  0% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+.zmani {
+  line-height: 1.9em;
+}
+@media (max-width: 768px) {
+  .zmani {
+    animation: none !important; /* מבטל את האנימציה */
+  }
+}
