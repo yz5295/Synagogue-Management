@@ -11,7 +11,7 @@
 .icon:hover {
   background-color: #5e4630; /* נחושת כהה */
   color: #f8c471; /* זהב עדין */
-  transform: scale(1.2);
+  transform: scale(1.1);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5); /* צל יותר מודגש */
 }
 

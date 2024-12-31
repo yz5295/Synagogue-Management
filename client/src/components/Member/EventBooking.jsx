@@ -529,7 +529,7 @@ const EventBooking = () => {
   <div style="max-width: 500px; margin: 20px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; font-family: Arial, sans-serif; direction: rtl; text-align: right;">
     <h3 style="margin-top: 0; color: #333;">סיכום הזמנה</h3>
     <p><strong>אולמי בית הכנסת ${settings.synagogueName}</strong></p>
-    <p>הזמנה ל: ${user.first_name} ${user.last_name}</p>
+    <p>הזמנה מאת: ${user.first_name} ${user.last_name}</p>
     <p>סוג האירוע: ${eventType}</p>
     <p>בתאריך: ${selectedDate ? selectedDate.format("DD-MM-YYYY") : ""}</p>
     <p>משעה: ${startTime ? startTime : ""} עד שעה: ${endTime ? endTime : ""}</p>

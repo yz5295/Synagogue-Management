@@ -21,17 +21,6 @@
   z-index: 1000;
 }
 
-.icon {
-  cursor: pointer;
-  color: #007bff; /* כחול כהה */
-  transition: all 0.3s ease;
-  background-color: #333;
-}
-
-.icon:hover {
-  color: #0056b3; /* צבע כהה יותר */
-}
-
 .login-options {
   position: absolute;
   top: 60px;
@@ -224,8 +213,15 @@
   z-index: 1000;
 } */
 /* עיצוב האייקון */
+.login-container .icon {
+  height: 94%;
+  width: 94%;
+  margin-left: -10px;
+}
 .icon {
   cursor: pointer;
+  /* height: 80%;
+  width: 80%; */
   color: #7a5900; /* גוון חום-זהוב כהה */
   background-color: #f5d67e; /* גוון זהוב רך */
   border-radius: 50%;
@@ -237,7 +233,7 @@
 .icon:hover {
   background-color: #7a5900; /* גוון חום-זהוב כהה */
   color: #f5d67e; /* גוון זהוב רך */
-  transform: scale(1.2);
+  transform: scale(1.1);
   box-shadow: 0 6px 12px rgba(122, 89, 0, 0.6);
 }
 
@@ -253,8 +249,8 @@
   padding: 10px;
   width: 150px;
   animation: fadeIn 0.3s ease;
-  background-color: #fff9e6; /* רקע בגוון קרם עדין */
-  border: 1px solid #f5d67e; /* גוון זהוב רך */
+  background-color: #fff9e6;
+  border: 1px solid #f5d67e;
   gap: 10px;
 }
 
@@ -271,8 +267,8 @@
 
 .entry-link {
   background-color: transparent;
-  color: #7a5900; /* גוון חום-זהוב כהה */
-  border: 1px solid #f5d67e; /* גוון זהוב רך */
+  color: #7a5900;
+  border: 1px solid #f5d67e;
   border-radius: 5px;
   padding: 5px 10px;
   cursor: pointer;
@@ -282,11 +278,10 @@
 }
 
 .entry-link:hover {
-  background-color: #f5d67e; /* גוון זהוב רך */
-  color: #7a5900; /* גוון חום-זהוב כהה */
+  background-color: #f5d67e;
+  color: #7a5900;
 }
 
-/* HomePage.css */
 .homepage-container.mobile {
   display: flex;
   flex-direction: column;
@@ -296,7 +291,7 @@
 
 .header-container {
   text-align: center;
-  margin-top: 25px;
+  margin-top: 12px;
 }
 
 .time-container,
@@ -315,7 +310,7 @@
 .button {
   padding: 10px 20px;
   font-size: 1em;
-  width: 55%;
+  width: 200px;
   animation: none !important;
   transition: none !important;
 }
@@ -467,27 +462,23 @@
 }
 .buttons-container {
   display: flex;
-  justify-content: center; /* מרכז את הכפתור */
+  justify-content: center;
   width: 100%;
-  margin: 10px 0; /* צמצום המרווחים מסביב */
+  margin: 10px 0;
 }
 
 .button {
-  padding: 10px 40px; /* גודל מדויק יותר */
-  font-size: 1em; /* טקסט קטן ומעודן יותר */
+  padding: 10px 40px;
+  font-size: 1em;
   font-weight: bold;
-  color: #4d3b0c; /* צבע טקסט שמתאים לגוונים שבתמונה */
-  background: linear-gradient(
-    145deg,
-    #ffe6b3,
-    #f5d28d
-  ); /* גוונים רכים שמשתלבים בדף */
-  border: 2px solid #d1a768; /* צבע שוליים זהוב רך */
-  border-radius: 50px; /* צורה אליפטית */
+  color: #4d3b0c;
+  background: linear-gradient(145deg, #ffe6b3, #f5d28d);
+  border: 2px solid #d1a768;
+  border-radius: 50px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* צל קל */
-  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5); /* אפקט עדין לטקסט */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
 }
 
 .button:hover {
@@ -560,7 +551,8 @@
     #d9b97a
   );  */
   border-radius: 20px;
-  justify-content: space-between;
+  width: 100%;
+  /* justify-content: space-between; */
   /* box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); */
 }
 
@@ -576,7 +568,6 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   text-align: center;
   /* font-size: 1.1rem; */
-  font-weight: bold;
   color: #5e4221;
   transition: all 0.3s ease;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -621,10 +612,9 @@ button {
   padding: 0;
 } */
 .day-times-button {
-  cursor: pointer; /* מצביע לחיץ */
+  cursor: pointer;
 }
 
-/* קונטיינר עיקרי עם גודל קבוע */
 .container {
   width: 393px;
   height: 852px;
@@ -647,46 +637,46 @@ button {
   font-size: 24px; /* 1.6em מתוך בסיס 15px */
   font-weight: 500;
   border-radius: 12px;
-  width: 303px; /* 393px - 20px פדינג משני הצדדים */
-  height: 100px; /* גובה קבוע, לדוגמא */
+  /* width: 70%; */
+  height: 95px; /* גובה קבוע, לדוגמא */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   background: linear-gradient(145deg, #f9e7b5, #dbc18a);
   padding: 15px 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1),
     inset 0 0 35px 5px rgba(0, 0, 0, 0.15),
     inset 0 2px 1px 1px rgba(255, 255, 255, 0.6),
     inset 0 -2px 1px rgba(0, 0, 0, 0.15);
-  margin-top: 30px;
+  /* margin-top: 30px; */
 }
 
 /* עיצוב השעה */
 .date-container.mobile .time-container {
-  font-size: 25px; /* 1.55em מתוך בסיס 15px */
+  font-size: 25px;
   font-weight: bold;
   color: #704c24;
   border-bottom: 2px solid #d4af37;
-  padding-bottom: 8px;
-  margin-bottom: 8px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 /* תיבת כותרת */
 .date-container.mobile .title-box {
-  font-size: 14px; /* 0.8em מתוך בסיס 15px */
+  font-size: 14px;
   display: flex;
   justify-content: space-between;
-  width: 293px; /* 393px - 20px פדינג משני הצדדים */
-  margin-top: 10px;
+  width: 283px;
+  /* margin-top: 10px; */
 }
 
 /* עיצוב התאריך והפרשה */
 .date-container.mobile .date,
 .date-container.mobile .parashaholday {
   /* text-align: center; */
-  width: 200px; /* 353px / 2 - ריווח */
-  font-size: 16px; /* 1em */
+  width: 200px;
+  font-size: 16px;
   color: #5c3d21;
   margin-right: 9px;
   margin-left: 9px;
@@ -706,11 +696,11 @@ button {
 /* עמודות תפילה */
 .prayer-column {
   background: linear-gradient(145deg, #f9edd1, #d9b97aab);
-  width: 170px;
-  height: 240px;
+  /* width: 170px; */
+  height: 230px;
   border-radius: 20px;
   color: #5e4221;
-  font-weight: bold;
+  /* font-weight: bold; */
   text-align: center;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -854,11 +844,11 @@ button {
 }
 
 .congratulations-box {
-  height: 120px;
+  height: 100px;
 }
 
 .messages-box {
-  height: 150px;
+  height: 130px;
 }
 
 .messages-box,

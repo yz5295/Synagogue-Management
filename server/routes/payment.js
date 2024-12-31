@@ -8,12 +8,16 @@ router.get("/publishable-key", (req, res) => {
   res.json({ publishableKey: process.env.STRIPE_PUBLISHABLE_KEY });
 });
 
+if (!process.env.STRIPE_ID || !process.env.STRIPE_PUBLISHABLE_KEY) {
+  throw new Error("Stripe API keys are not defined in environment variables.");
+}
+
 const calculateOrderAmount = (items) => {
   let total = 100;
   items.forEach((item) => {
-    total *= item.amount;
+    total += item.amount;
   });
-  return total;
+  return total * 100;
 };
 
 router.post("/create-payment-intent", async (req, res) => {
@@ -37,6 +41,7 @@ router.post("/create-payment-intent", async (req, res) => {
     automatic_payment_methods: {
       enabled: true,
     },
+    receipt_email: customerDetails.email,
   });
 
   res.send({

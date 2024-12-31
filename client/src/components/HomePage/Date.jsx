@@ -55,10 +55,16 @@ const DateComponent = () => {
 
     const checkJewishHoliday = async () => {
       const today = new Date();
-      const year = today.getFullYear();
+      let year = today.getFullYear();
       const now = new Date();
       // const now = new Date("2024-12-31T17:00:52+02:00");
       // console.log(now);
+
+      if (now.getMonth() === 0 && now.getDate() === 1) {
+        year -= 1;
+      }
+
+      console.log(year);
 
       try {
         const response = await fetch(
@@ -68,8 +74,10 @@ const DateComponent = () => {
 
         const todayHolidays = data.items.filter((item) => {
           const itemDate = new Date(item.date);
+
           const isHolidayOrRoshChodesh =
             item.category === "holiday" || item.category === "roshchodesh";
+
           return (
             isHolidayOrRoshChodesh &&
             now >= itemDate &&
