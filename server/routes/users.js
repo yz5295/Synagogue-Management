@@ -8,7 +8,7 @@ const pool = require("../config/db");
 
 (async () => {
   try {
-    const [rows] = await connection.query("SELECT 1 + 1 AS solution");
+    const [rows] = await pool.query("SELECT 1 + 1 AS solution");
     console.log("Database connected! Test result:", rows[0].solution);
   } catch (err) {
     console.error("Failed to connect to the database:", err);
