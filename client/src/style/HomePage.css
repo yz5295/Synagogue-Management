@@ -544,7 +544,9 @@
   display: flex;
   flex-direction: row;
   gap: 1rem;
-  padding: 1rem;
+  padding: 0.9rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.7rem;
   /* background: linear-gradient(
     145deg,
     #f9edd1,
@@ -634,11 +636,12 @@ button {
 
 /* עיצוב תאריך */
 .date-container.mobile {
+  margin-bottom: 5px;
   font-size: 24px; /* 1.6em מתוך בסיס 15px */
   font-weight: 500;
   border-radius: 12px;
   /* width: 70%; */
-  height: 95px; /* גובה קבוע, לדוגמא */
+  height: 85px; /* גובה קבוע, לדוגמא */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -658,7 +661,7 @@ button {
   font-weight: bold;
   color: #704c24;
   border-bottom: 2px solid #d4af37;
-  padding-bottom: 10px;
+  padding-bottom: 5px;
   margin-bottom: 10px;
 }
 
@@ -697,7 +700,7 @@ button {
 .prayer-column {
   background: linear-gradient(145deg, #f9edd1, #d9b97aab);
   /* width: 170px; */
-  height: 230px;
+  height: 220px;
   border-radius: 20px;
   color: #5e4221;
   /* font-weight: bold; */
@@ -706,6 +709,7 @@ button {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   opacity: 0.95;
   order: 1;
+  padding-top: -15px;
 }
 
 /* אפקט ריחוף מעודן */
