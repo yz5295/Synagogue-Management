@@ -252,6 +252,9 @@ function LoginMenu({ menuOpen, toggleMenu }) {
         password,
       });
 
+      console.log("API URL:", process.env.REACT_APP_API_URL);
+      console.log("API URL 2:", API_URL);
+
       if (response.status === 201) {
         setRegistrationSuccess(true);
         setRegisterError("");
