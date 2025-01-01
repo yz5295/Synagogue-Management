@@ -10,6 +10,7 @@ import {
   Modal,
 } from "antd";
 import axios from "axios";
+import API_URL from "../../config";
 
 const { TextArea } = Input;
 
@@ -27,7 +28,7 @@ const AddMessages = () => {
   const fetchMessages = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("/messageAdmin");
+      const response = await axios.get(`${API_URL}/messageAdmin`);
       setMessages(response.data);
     } catch (error) {
       message.error("שגיאה בטעינת ההודעות");
@@ -38,10 +39,12 @@ const AddMessages = () => {
 
   const addMessage = async (values) => {
     try {
-      const response = await axios.post("/messageAdmin", values);
+      const response = await axios.post(`${API_URL}/messageAdmin`, values);
       setMessages((prev) => [...prev, response.data]);
       message.success("הודעה נוספה בהצלחה");
     } catch (error) {
+      console.log(error);
+
       message.error("שגיאה בהוספת ההודעה");
     }
   };

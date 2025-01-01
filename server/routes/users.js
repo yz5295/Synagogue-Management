@@ -35,7 +35,6 @@ router.get("/all", async (req, res) => {
   try {
     const [results] = await pool.query("SELECT * FROM users");
     res.json(results);
-    console.log(results);
   } catch (err) {
     console.error("שגיאה בשליפת נתונים:", err);
     res.status(500).json({ error: "שגיאה בשליפת נתונים" });
