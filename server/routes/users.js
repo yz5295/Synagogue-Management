@@ -6,6 +6,15 @@ require("dotenv").config();
 const router = express.Router();
 const pool = require("../config/db");
 
+(async () => {
+  try {
+    const [rows] = await connection.query("SELECT 1 + 1 AS solution");
+    console.log("Database connected! Test result:", rows[0].solution);
+  } catch (err) {
+    console.error("Failed to connect to the database:", err);
+  }
+})();
+
 const SECRET_KEY = process.env.SECRET_KEY;
 
 router.get("/", authToken, async (req, res) => {

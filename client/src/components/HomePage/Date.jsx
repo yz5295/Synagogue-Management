@@ -60,11 +60,9 @@ const DateComponent = () => {
       // const now = new Date("2024-12-31T17:00:52+02:00");
       // console.log(now);
 
-      if (now.getMonth() === 0 && now.getDate() === 1) {
-        year -= 1;
-      }
-
-      console.log(year);
+      // if (now.getMonth() === 0 && now.getDate() === 1) {
+      //   year -= 1;
+      // }
 
       try {
         const response = await fetch(
