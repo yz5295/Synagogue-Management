@@ -87,6 +87,8 @@ function LoginMenu({ menuOpen, toggleMenu }) {
   };
 
   const handleOpenRegisterModal = () => {
+    console.log("API URL:", process.env.REACT_APP_API_URL);
+    console.log("API URL 2:", API_URL);
     setIsRegisterModalOpen(true);
     setRegisterForm({
       firstName: "",
