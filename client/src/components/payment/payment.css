@@ -235,7 +235,7 @@ td {
 }
 
 @media only screen and (max-width: 600px) {
-  form,
+  .form,
   #dpm-annotation,
   #payment-status {
     width: 80vw;

@@ -3,6 +3,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "../../style/LoginMenu.css";
 import axios from "axios";
+import API_URL from "../../config";
 
 function LoginMenu({ menuOpen, toggleMenu }) {
   const navigate = useNavigate();
@@ -241,7 +242,7 @@ function LoginMenu({ menuOpen, toggleMenu }) {
     }
 
     try {
-      const response = await axios.post("/api/users", {
+      const response = await axios.post(`${API_URL}/api/users`, {
         firstName,
         lastName,
         address,
@@ -331,7 +332,10 @@ function LoginMenu({ menuOpen, toggleMenu }) {
                 <p>הפרטים נשמרו בהצלחה!</p>
               </div>
             ) : (
-              <form onSubmit={handleSettingsSubmit} className="settings-form">
+              <form
+                onSubmit={handleSettingsSubmit}
+                className="settings-form .modal-content-simple"
+              >
                 <h4>לא נמצאו הגדרות, אנא הזן פרטי בית הכנסת להגדרה ראשונית:</h4>
                 <input
                   type="text"
