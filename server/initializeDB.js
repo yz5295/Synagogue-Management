@@ -1,4 +1,4 @@
-const pool = require("../server/config/db"); // ייבוא החיבור ל-MySQL
+const pool = require("./config/db"); // ייבוא החיבור ל-MySQL
 
 const initializeDatabase = async () => {
   try {
