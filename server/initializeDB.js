@@ -3,9 +3,7 @@ const pool = require("./config/db"); // ייבוא החיבור ל-MySQL
 const initializeDatabase = async () => {
   try {
     const queries = [
-      "CREATE DATABASE IF NOT EXISTS synagogue",
-      "USE synagogue",
-      `CREATE TABLE IF NOT EXISTS users (
+      "USE railway"`CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
         first_name VARCHAR(40) NOT NULL,
         last_name VARCHAR(40) NOT NULL,
