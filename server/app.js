@@ -33,11 +33,6 @@ app.use("/payment", payment);
 
 const initializeDatabase = require("./initializeDB");
 
-(async () => {
-  await initializeDatabase();
-  console.log("Database setup complete.");
-})();
-
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
