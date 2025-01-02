@@ -173,7 +173,7 @@ const DateComponent = () => {
               showParasha ? "fade-in" : "fade-out"
             }`}
           >
-            {showParasha
+            {showParasha || holidays.length === 0
               ? parasha || "טוען פרשת השבוע..."
               : holidays.length > 0
               ? holidays[currentHolidayIndex]
