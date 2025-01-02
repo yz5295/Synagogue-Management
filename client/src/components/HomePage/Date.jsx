@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import dayjs from "dayjs";
 import "../../style/DateComponent.css";
 
 const DateComponent = () => {
@@ -54,33 +55,45 @@ const DateComponent = () => {
     };
 
     const checkJewishHoliday = async () => {
-      const today = new Date();
-      let year = today.getFullYear();
-      const now = new Date();
-      // const now = new Date("2024-12-31T17:00:52+02:00");
-      // console.log(now);
-
-      // if (now.getMonth() === 0 && now.getDate() === 1) {
-      //   year -= 1;
-      // }
-
       try {
+        // const now = new Date("2024-12-31T19:00:52+02:00");
+        const now = new Date();
+        const year = now.getFullYear();
+        const date = now.toISOString().split("T")[0];
+
+        const sunsetResponse = await fetch(
+          `https://www.hebcal.com/zmanim?cfg=json&latitude=31.7683&longitude=35.2137&date=${date}`
+        );
+        const sunsetData = await sunsetResponse.json();
+        const sunsetTime = new Date(sunsetData.times.sunset);
+
+        const isAfterSunset = now > sunsetTime;
+
         const response = await fetch(
           `https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=off&nx=on&year=${year}&geonameid=281184`
         );
-        const data = await response.json();
+        const holidaysData = await response.json();
 
-        const todayHolidays = data.items.filter((item) => {
-          const itemDate = new Date(item.date);
+        const currentJewishDate = isAfterSunset
+          ? new Date(now.getTime() + 24 * 60 * 60 * 1000)
+              .toISOString()
+              .split("T")[0]
+          : date;
+
+        const todayHolidays = holidaysData.items.filter((item) => {
+          const holidayDateTime = dayjs(item.date);
 
           const isHolidayOrRoshChodesh =
             item.category === "holiday" || item.category === "roshchodesh";
 
-          return (
-            isHolidayOrRoshChodesh &&
-            now >= itemDate &&
-            now < new Date(itemDate.getTime() + 24 * 60 * 60 * 1000)
-          );
+          if (item.date.includes("T")) {
+            const nextDay = holidayDateTime.add(1, "day").format("YYYY-MM-DD");
+
+            return isHolidayOrRoshChodesh && nextDay === currentJewishDate;
+          }
+
+          const holidayDate = holidayDateTime.format("YYYY-MM-DD");
+          return isHolidayOrRoshChodesh && holidayDate === currentJewishDate;
         });
 
         if (todayHolidays.length > 0) {

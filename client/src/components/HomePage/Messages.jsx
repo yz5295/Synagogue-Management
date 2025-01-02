@@ -60,14 +60,13 @@ const Messages = () => {
       );
       const sunsetData = await sunsetResponse.json();
       const sunsetTime = new Date(sunsetData.times.sunset);
-      console.log(sunsetTime);
 
       const isAfterSunset = now > sunsetTime;
 
-      const holidaysResponse = await fetch(
+      const response = await fetch(
         `https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=off&nx=on&year=${year}&geonameid=281184`
       );
-      const holidaysData = await holidaysResponse.json();
+      const holidaysData = await response.json();
 
       const currentJewishDate = isAfterSunset
         ? new Date(now.getTime() + 24 * 60 * 60 * 1000)
@@ -76,7 +75,14 @@ const Messages = () => {
         : date;
 
       const todayHolidays = holidaysData.items.filter((item) => {
-        const holidayDate = dayjs(item.date).format("YYYY-MM-DD");
+        const holidayDateTime = dayjs(item.date);
+
+        if (item.date.includes("T")) {
+          const nextDay = holidayDateTime.add(1, "day").format("YYYY-MM-DD");
+          return nextDay === currentJewishDate;
+        }
+
+        const holidayDate = holidayDateTime.format("YYYY-MM-DD");
         return holidayDate === currentJewishDate;
       });
 

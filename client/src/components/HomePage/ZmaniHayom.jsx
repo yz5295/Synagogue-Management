@@ -26,7 +26,9 @@ const ZmaniHayom = () => {
 
     const fetchDafYomi = async () => {
       try {
-        const today = new Date().toISOString().split("T")[0];
+        const now = new Date();
+        const adjustedTime = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+        const today = adjustedTime.toISOString().split("T")[0];
         const dafYomiUrl = `https://www.hebcal.com/hebcal?v=1&cfg=json&F=on&start=${today}&end=${today}`;
         const response = await axios.get(dafYomiUrl);
         const dafYomiData = response.data.items.find(

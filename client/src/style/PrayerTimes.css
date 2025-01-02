@@ -20,7 +20,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 25vh;
+  z-index: 9999;
 }
 
 .ant-typography.title {
@@ -62,10 +63,10 @@
   margin: 17px 0;
 }
 
-.spinner {
+/* .spinner {
   font-size: 1.5rem;
   color: #333;
-}
+} */
 @media (max-width: 768px) {
   .scrolling-content {
     animation: none !important; /* מבטל את האנימציה */
