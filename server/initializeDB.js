@@ -98,4 +98,4 @@ const initializeDatabase = async () => {
   }
 };
 
-initializeDatabase();
+module.exports = initializeDatabase;
