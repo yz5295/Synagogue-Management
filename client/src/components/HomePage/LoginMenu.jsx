@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "../../style/LoginMenu.css";
 import axios from "axios";
 import API_URL from "../../config";
+import API_URL from "../../config";
 
 function LoginMenu({ menuOpen, toggleMenu }) {
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ function LoginMenu({ menuOpen, toggleMenu }) {
 
   const checkSettingsOnOpenAdmin = async () => {
     try {
-      const response = await axios.get("/settings");
+      const response = await axios.get(`${API_URL}/settings`);
       if (response.data && response.data.settingsExist) {
         setIsSavedSettings(true);
         setIsAdminModalOpen(true);
@@ -119,7 +120,7 @@ function LoginMenu({ menuOpen, toggleMenu }) {
       return;
     }
     try {
-      const response = await axios.post("/settings/login", {
+      const response = await axios.post(`${API_URL}/settings/login`, {
         password: adminPassword,
       });
 
@@ -140,7 +141,7 @@ function LoginMenu({ menuOpen, toggleMenu }) {
       return;
     }
     try {
-      const response = await fetch("/api/users/login", {
+      const response = await fetch(`${API_URL}/users/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -182,7 +183,7 @@ function LoginMenu({ menuOpen, toggleMenu }) {
     }
 
     try {
-      const response = await axios.post("/settings", formData);
+      const response = await axios.post(`${API_URL}/settings`, formData);
       if (response.status === 200) {
         setIsSuccessVisible(true);
         setSettingsError("");
@@ -244,7 +245,7 @@ function LoginMenu({ menuOpen, toggleMenu }) {
     }
 
     try {
-      const response = await axios.post(`${API_URL}/api/users`, {
+      const response = await axios.post(`${API_URL}/users`, {
         firstName,
         lastName,
         address,

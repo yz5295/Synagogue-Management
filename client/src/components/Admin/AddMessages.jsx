@@ -51,7 +51,7 @@ const AddMessages = () => {
 
   const updateMessage = async (id, updatedContent) => {
     try {
-      const response = await axios.put(`/messageAdmin/${id}`, {
+      const response = await axios.put(`${API_URL}/messageAdmin/${id}`, {
         content: updatedContent,
       });
       setMessages((prev) =>
@@ -67,7 +67,7 @@ const AddMessages = () => {
 
   const removeMessage = async (id) => {
     try {
-      await axios.delete(`/messageAdmin/${id}`);
+      await axios.delete(`${API_URL}/messageAdmin/${id}`);
       setMessages((prev) => prev.filter((msg) => msg.id !== id));
       message.success("הודעה נמחקה בהצלחה");
     } catch (error) {

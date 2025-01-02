@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, InputNumber, Button, Result, Row, Col, message } from "antd";
+import {
+  Form,
+  Input,
+  InputNumber,
+  Button,
+  Result,
+  Row,
+  Col,
+  message,
+} from "antd";
 import axios from "axios";
+import API_URL from "../../config";
 
 const Settings = () => {
   const [form] = Form.useForm();
@@ -13,7 +23,7 @@ const Settings = () => {
 
   const onFinish = async (values) => {
     try {
-      await axios.post("/settings", values);
+      await axios.post(`${API_URL}/settings`, values);
       setIsSaved(true);
     } catch (error) {
       setIsSaved(false);

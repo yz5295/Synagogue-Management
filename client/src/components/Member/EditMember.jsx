@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, message, Card, Checkbox } from "antd";
 import axios from "axios";
+import API_URL from "../../config";
 
 const EditMember = () => {
   const [form] = Form.useForm();
@@ -13,7 +14,7 @@ const EditMember = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get("/api/users", {
+        const response = await axios.get(`${API_URL}/users`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(response.data.user);
@@ -47,9 +48,13 @@ const EditMember = () => {
         updateData.password = newPassword;
       }
 
-      const response = await axios.put(`/api/users/${user.id}`, updateData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.put(
+        `${API_URL}/api/users/${user.id}`,
+        updateData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       if (response.status === 200) {
         message.success("פרטי המשתמש עודכנו בהצלחה!");

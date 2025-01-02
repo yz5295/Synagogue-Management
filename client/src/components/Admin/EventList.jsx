@@ -12,6 +12,7 @@ import {
 import { useNavigate, useSearchParams } from "react-router-dom";
 import dayjs from "dayjs";
 import "dayjs/locale/he";
+import API_URL from "../../config";
 
 dayjs.locale("he");
 
@@ -32,7 +33,7 @@ const EventList = () => {
 
   const fetchEvents = async () => {
     try {
-      const response = await axios.get("/eventlist/events");
+      const response = await axios.get(`${API_URL}/eventlist/events`);
       const eventsData = response.data;
 
       setEvents(eventsData);

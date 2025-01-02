@@ -14,6 +14,7 @@ import {
   MenuOutlined,
 } from "@ant-design/icons";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import API_URL from "../../config";
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
@@ -35,7 +36,7 @@ function AdminPage() {
       }
     };
 
-    fetch("/settings")
+    fetch(`${API_URL}/settings`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch settings");

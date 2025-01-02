@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static("public"));
 
-app.use("/api/users", users);
+app.use("/users", users);
 app.use("/congratulations", congratulations);
 app.use("/messageAdmin", messageAdmin);
 app.use("/prayer-times", prayertimes);
@@ -30,8 +30,6 @@ app.use("/messages", messages);
 app.use("/financemanager", financemanager);
 app.use("/sendmail", sendmail);
 app.use("/payment", payment);
-
-const initializeDatabase = require("./initializeDB");
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

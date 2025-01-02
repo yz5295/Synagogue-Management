@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import dayjs from "dayjs";
 import "../../style/Messages.css";
+import API_URL from "../../config";
 
 const Messages = () => {
   const [messages, setMessages] = useState([]);
@@ -30,7 +31,7 @@ const Messages = () => {
   const fetchMessages = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("/messageAdmin");
+      const response = await axios.get(`${API_URL}/messageAdmin`);
       let allMessages = response.data;
       const holidayMessages = await checkJewishHoliday();
       if (holidayMessages && holidayMessages.length > 0) {

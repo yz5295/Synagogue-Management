@@ -7,6 +7,7 @@ import Messages from "./Messages";
 import Congratulations from "./Congratulations";
 import axios from "axios";
 import "../../style/HomePage.css";
+import API_URL from "../../config";
 
 function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -17,7 +18,7 @@ function HomePage() {
   useEffect(() => {
     const fetchDonations = async () => {
       try {
-        const response = await axios.get("/Settings");
+        const response = await axios.get(`${API_URL}/Settings`);
         const data = response.data;
         document.title = `בית הכנסת ${data.synagogueName}`;
       } catch (error) {

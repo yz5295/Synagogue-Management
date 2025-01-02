@@ -12,6 +12,7 @@ import {
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import "../../style/MemberPage.css";
+import API_URL from "../../config";
 
 const { Header, Sider, Content } = Layout;
 
@@ -27,7 +28,7 @@ function MemberPage() {
     const token = JSON.parse(localStorage.getItem("token"));
     const fetchUser = async () => {
       try {
-        const response = await axios.get("/api/users", {
+        const response = await axios.get(`${API_URL}/users`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(response.data.user);

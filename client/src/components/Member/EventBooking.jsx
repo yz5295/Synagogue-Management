@@ -22,6 +22,7 @@ import CreditCard from "../payment/CreditCard";
 import "../../style/EventBooking.css";
 import axios from "axios";
 import SendEmail from "./SendEmail";
+import API_URL from "../../config";
 
 const { Step } = Steps;
 const { Option } = Select;
@@ -77,15 +78,15 @@ const EventBooking = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const eventsResponse = await fetch("/eventlist/events");
+        const eventsResponse = await fetch(`${API_URL}/eventlist/events`);
         const eventsData = await eventsResponse.json();
         setEvents(eventsData);
 
-        const settingsResponse = await fetch("/settings");
+        const settingsResponse = await fetch(`${API_URL}/settings`);
         const settingsData = await settingsResponse.json();
         setSettings(settingsData);
 
-        const bookedTimesResponse = await fetch("/eventlist/booked-times");
+        const bookedTimesResponse = await fetch(`${API_URL}/eventlist/booked-times`);
         const bookedTimesData = await bookedTimesResponse.json();
         setBookedTimes(bookedTimesData);
 
@@ -93,7 +94,7 @@ const EventBooking = () => {
         const uniqueDates = [...new Set(dates)];
         setBookedDates(uniqueDates);
 
-        const userResponse = await axios.get("/api/users", {
+        const userResponse = await axios.get(`${API_URL}/users`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(userResponse.data.user);
@@ -322,7 +323,7 @@ const EventBooking = () => {
       orderDate: dayjs().format("YYYY-MM-DD"),
     };
 
-    fetch("/eventlist/bookings", {
+    fetch(`${API_URL}/eventlist/bookings`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(bookingData),

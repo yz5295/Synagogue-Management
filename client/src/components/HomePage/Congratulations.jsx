@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Spin, message } from "antd";
 import axios from "axios";
 import "../../style/Congratulations.css";
+import API_URL from "../../config";
 
 const Congratulations = () => {
   const [congratulations, setCongratulations] = useState([]);
@@ -13,7 +14,7 @@ const Congratulations = () => {
 
   const fetchMessages = async () => {
     try {
-      const response = await axios.get("/congratulations");
+      const response = await axios.get(`${API_URL}/congratulations`);
       setCongratulations(response.data);
     } catch (error) {
       message.error("שגיאה בטעינת הודעות");

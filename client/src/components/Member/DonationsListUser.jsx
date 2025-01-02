@@ -3,6 +3,7 @@ import { Table, Select, Typography } from "antd";
 import dayjs from "dayjs";
 import "dayjs/locale/he";
 import axios from "axios";
+import API_URL from "../../config";
 
 dayjs.locale("he");
 
@@ -34,7 +35,7 @@ const DonationsListUser = () => {
           throw new Error("שגיאה: פרטי משתמש חסרים. התחבר מחדש ונסה שוב.");
         }
 
-        const userResponse = await axios.get("/api/users", {
+        const userResponse = await axios.get(`${API_URL}/users`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -44,7 +45,7 @@ const DonationsListUser = () => {
 
         const userId = userResponse.data.user.id;
 
-        const donationResponse = await fetch("/donation");
+        const donationResponse = await fetch(`${API_URL}/donation`);
         if (!donationResponse.ok) {
           throw new Error(
             `בקשה נכשלה בשל תקלה בשרת סטטוס: ${donationResponse.status}`

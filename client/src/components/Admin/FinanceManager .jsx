@@ -22,6 +22,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import "dayjs/locale/he";
 import isBetween from "dayjs/plugin/isBetween";
+import API_URL from "../../config";
 
 dayjs.extend(isBetween);
 dayjs.locale("he");
@@ -80,7 +81,7 @@ const FinanceManager = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(" /financemanager");
+      const response = await axios.get(`${API_URL}/financemanager`);
       setData(response.data);
       filterData(response.data, [startDate, endDate]);
       updateFinanceManager();
@@ -140,7 +141,7 @@ const FinanceManager = () => {
       readOnly: false,
     };
     try {
-      await axios.post("/financemanager", newEntry);
+      await axios.post(`${API_URL}/financemanager`, newEntry);
       fetchData();
 
       setIsAddModalVisible(false);
@@ -156,7 +157,10 @@ const FinanceManager = () => {
         ...values,
         date: values.date.toISOString(),
       };
-      await axios.put(`/financemanager/${currentDetails.id}`, updatedEntry);
+      await axios.put(
+        `${API_URL}/financemanager/${currentDetails.id}`,
+        updatedEntry
+      );
       fetchData();
       setIsEditModalVisible(false);
       setCurrentDetails(null);
@@ -167,7 +171,7 @@ const FinanceManager = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/financemanager/${id}`);
+      await axios.delete(`${API_URL}/financemanager/${id}`);
       fetchData();
     } catch (error) {
       message.error("שגיאה במחיקת הערך");
@@ -176,7 +180,7 @@ const FinanceManager = () => {
 
   async function updateFinanceManager() {
     try {
-      const response = await fetch("/financemanager/update-finance", {
+      const response = await fetch(`${API_URL}/financemanager/update-finance`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -200,7 +204,7 @@ const FinanceManager = () => {
     if (record.category === "תרומה") {
       const fetchDonations = async () => {
         try {
-          const response = await axios.get("/donation");
+          const response = await axios.get(`${API_URL}/donation`);
           const data = response.data;
           const matchedDonation = data.find(
             (donation) => donation.donation_id === orginalid
@@ -221,7 +225,7 @@ const FinanceManager = () => {
     if (record.category === "הזמנת אולם") {
       const fetchEvents = async () => {
         try {
-          const response = await axios.get("/eventlist/events");
+          const response = await axios.get(`${API_URL}/eventlist/events`);
           const data = response.data;
 
           const matchedEvents = data.find((event) => event.id === orginalid);

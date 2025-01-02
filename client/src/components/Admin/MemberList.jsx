@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Modal, Form, Input, message } from "antd";
 import axios from "axios";
+import API_URL from "../../config";
 
 const MemberList = () => {
   const [users, setUsers] = useState([]);
@@ -13,7 +14,7 @@ const MemberList = () => {
 
   const fetchUsers = async () => {
     try {
-      const { data } = await axios.get("/api/users/all");
+      const { data } = await axios.get(`${API_URL}/users/all`);
       setUsers(data);
     } catch (error) {
       message.error("שגיאה בטעינת נתוני מתפללים");
@@ -22,7 +23,7 @@ const MemberList = () => {
 
   const handleAddUser = async (values) => {
     try {
-      const { data } = await axios.post("/api/users", values);
+      const { data } = await axios.post(`${API_URL}/users`, values);
       setUsers((prev) => [...prev, data]);
       message.success("מתפלל נוסף בהצלחה");
       setIsModalOpen(false);
@@ -34,7 +35,7 @@ const MemberList = () => {
 
   const handleDeleteUser = async (id) => {
     try {
-      await axios.delete(`/api/users/${id}`);
+      await axios.delete(`${API_URL}/users/${id}`);
       console.log(id);
       setUsers((prev) => prev.filter((user) => user.id !== id));
       message.success("מתפלל הוסר בהצלחה");

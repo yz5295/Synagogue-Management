@@ -3,6 +3,7 @@ import { Table, message, Select, Space, Typography } from "antd";
 import axios from "axios";
 import dayjs from "dayjs";
 import { useSearchParams } from "react-router-dom";
+import API_URL from "../../config";
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -18,7 +19,7 @@ const DonationList = () => {
   useEffect(() => {
     const fetchDonations = async () => {
       try {
-        const response = await axios.get("/donation");
+        const response = await axios.get(`${API_URL}/donation`);
         const data = response.data;
         const processedData = data.map((donation) => ({
           id: donation.donation_id,

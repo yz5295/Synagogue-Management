@@ -3,6 +3,7 @@ import { Form, Input, Button, Typography, Card, Result } from "antd";
 import { SendOutlined } from "@ant-design/icons";
 import axios from "axios";
 import SendEmail from "./SendEmail";
+import API_URL from "../../config";
 
 const { Title } = Typography;
 const { TextArea } = Input;
@@ -20,7 +21,7 @@ const SendMessage = () => {
   const token = JSON.parse(localStorage.getItem("token"));
   const fetchUser = async () => {
     try {
-      const response = await axios.get("/api/users", {
+      const response = await axios.get(`${API_URL}/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUserEmail(response.data.user.email);
@@ -43,7 +44,7 @@ const SendMessage = () => {
     };
 
     try {
-      const response = await fetch("/messages/sendMessage", {
+      const response = await fetch(`${API_URL}/messages/sendMessage`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(messageData),

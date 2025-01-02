@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../../style/PrayerTimes.css";
+import API_URL from "../../config";
 
 const PrayerTimes = ({ type }) => {
   const [prayerList, setPrayerList] = useState({ weekday: [], shabbat: [] });
@@ -8,7 +9,7 @@ const PrayerTimes = ({ type }) => {
 
   const fetchPrayerTimes = async () => {
     try {
-      const { data } = await axios.get("/prayer-times");
+      const { data } = await axios.get(`${API_URL}/prayer-times`);
       setPrayerList(data);
     } catch (error) {
       console.error("שגיאה בטעינת זמני התפילה");

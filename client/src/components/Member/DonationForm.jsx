@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import "dayjs/locale/he";
 import CreditCard from "../payment/CreditCard";
 import SendEmail from "./SendEmail";
+import API_URL from "../../config";
 const { Option } = Select;
 
 const DonationForm = () => {
@@ -26,7 +27,7 @@ const DonationForm = () => {
 
   useEffect(() => {
     const fetchUserDetails = async () => {
-      const settingsResponse = await fetch("/settings");
+      const settingsResponse = await fetch(`${API_URL}/settings`);
       const settingsData = await settingsResponse.json();
       setSettings(settingsData);
 
@@ -37,7 +38,7 @@ const DonationForm = () => {
       }
 
       try {
-        const userResponse = await axios.get("/api/users", {
+        const userResponse = await axios.get(`${API_URL}/users`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -88,7 +89,10 @@ const DonationForm = () => {
       paymentIntent,
     };
 
-    const response = await axios.post("/donation", completeDonationData);
+    const response = await axios.post(
+      `${API_URL}/donation`,
+      completeDonationData
+    );
 
     if (response.status === 200) {
       setResult("התשלום התקבל בהצלחה!");

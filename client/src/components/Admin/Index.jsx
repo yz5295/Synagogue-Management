@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { List, Typography, Button, Modal, message } from "antd";
 import axios from "axios";
+import API_URL from "../../config";
 
 const { Title } = Typography;
 
@@ -16,7 +17,7 @@ const Index = () => {
   const fetchMessages = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("/messages");
+      const response = await axios.get(`${API_URL}/messages`);
       const sortedMessages = response.data.sort(
         (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
       );
@@ -33,7 +34,7 @@ const Index = () => {
 
     if (!messagee.read_boolean) {
       try {
-        await axios.patch(`/messages/${messagee.message_id}`, {
+        await axios.patch(`${API_URL}/messages/${messagee.message_id}`, {
           read_boolean: true,
         });
         setMessages((prev) =>
@@ -52,7 +53,7 @@ const Index = () => {
 
   const handleArchive = async (messageId) => {
     try {
-      await axios.post("/messages/archive", { id: messageId });
+      await axios.post(`${API_URL}/messages/archive`, { id: messageId });
       setMessages((prev) => prev.filter((msg) => msg.id !== messageId));
       message.success("ההודעה הועברה לארכיון בהצלחה");
     } catch (error) {

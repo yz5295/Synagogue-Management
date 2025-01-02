@@ -12,6 +12,7 @@ import {
 } from "antd";
 import { ClockCircleOutlined } from "@ant-design/icons";
 import axios from "axios";
+import API_URL from "../../config";
 
 const { Option } = Select;
 
@@ -24,7 +25,7 @@ const AddPrayerTimes = () => {
 
   const fetchPrayerTimes = async () => {
     try {
-      const { data } = await axios.get("/prayer-times");
+      const { data } = await axios.get(`${API_URL}/prayer-times`);
       setPrayerList(data);
       console.log(data);
     } catch (error) {
@@ -48,7 +49,7 @@ const AddPrayerTimes = () => {
     };
 
     try {
-      await axios.post("/prayer-times", newPrayer);
+      await axios.post(`${API_URL}/prayer-times`, newPrayer);
       fetchPrayerTimes();
       setPrayerName("");
       setPrayerTime(null);
@@ -61,7 +62,7 @@ const AddPrayerTimes = () => {
 
   const removePrayer = async (name, dayType) => {
     try {
-      await axios.delete(`/prayer-times/${name}?dayType=${dayType}`);
+      await axios.delete(`${API_URL}/prayer-times/${name}?dayType=${dayType}`);
       fetchPrayerTimes();
       antdMessage.success("התפילה הוסרה בהצלחה");
     } catch (error) {

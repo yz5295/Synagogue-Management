@@ -3,6 +3,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "./CheckoutForm";
 import CompletePage from "./CompletePage";
+import API_URL from "../../config";
 
 import "./payment.css";
 
@@ -28,7 +29,7 @@ export default function CreditCard({
   };
 
   useEffect(() => {
-    fetch("/payment/publishable-key")
+    fetch(`${API_URL}/payment/publishable-key`)
       .then((res) => res.json())
       .then((data) => {
         setStripePromise(loadStripe(data.publishableKey));
@@ -38,7 +39,7 @@ export default function CreditCard({
 
   useEffect(() => {
     if (amount > 2) {
-      fetch("/payment/create-payment-intent", {
+      fetch(`${API_URL}/payment/create-payment-intent`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

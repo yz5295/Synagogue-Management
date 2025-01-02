@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
+import API_URL from "../../config";
 
 function SendEmail({ to, subject, text }) {
   const [senderName, setSenderName] = useState("");
@@ -26,15 +27,12 @@ function SendEmail({ to, subject, text }) {
           </div>
         `;
 
-        const response = await axios.post(
-          "http://localhost:5000/sendmail/email",
-          {
-            to,
-            subject,
-            text: formattedMessage,
-            senderName: updatedSenderName,
-          }
-        );
+        const response = await axios.post(`${API_URL}/sendmail/email`, {
+          to,
+          subject,
+          text: formattedMessage,
+          senderName: updatedSenderName,
+        });
 
         console.log("Response:", response.data);
       } catch (error) {

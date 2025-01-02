@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Button, Input, List, message as antdMessage, Space } from "antd";
+import API_URL from "../../config";
 
 const AddCongratulations = () => {
   const [congratulations, setCongratulations] = useState([]);
@@ -12,7 +13,7 @@ const AddCongratulations = () => {
   const fetchMessages = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:3000/congratulations");
+      const response = await axios.get(`${API_URL}/congratulations`);
       setCongratulations(response.data);
     } catch (error) {
       antdMessage.error("שגיאה בטעינת ההודעות");
@@ -32,7 +33,7 @@ const AddCongratulations = () => {
     }
     try {
       const response = await axios.post(
-        "http://localhost:3000/congratulations",
+        `${API_URL}/congratulations`,
         {
           message: newMessage,
         }
@@ -47,7 +48,7 @@ const AddCongratulations = () => {
 
   const deleteMessage = async (id) => {
     try {
-      await axios.delete(`http://localhost:3000/congratulations/${id}`);
+      await axios.delete(`${API_URL}/congratulations/${id}`);
       setCongratulations((prev) => prev.filter((msg) => msg.id !== id));
       antdMessage.success("ההודעה נמחקה בהצלחה");
     } catch (error) {
@@ -67,7 +68,7 @@ const AddCongratulations = () => {
     }
     try {
       const response = await axios.put(
-        `http://localhost:3000/congratulations/${editingId}`,
+        `${API_URL}/congratulations/${editingId}`,
         {
           message: editedMessage,
         }
