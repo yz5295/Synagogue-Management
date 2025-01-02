@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import "../../style/LoginMenu.css";
 import axios from "axios";
 import API_URL from "../../config";
-import API_URL from "../../config";
 
 function LoginMenu({ menuOpen, toggleMenu }) {
   const navigate = useNavigate();
