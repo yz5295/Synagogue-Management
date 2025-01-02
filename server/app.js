@@ -31,6 +31,14 @@ app.use("/financemanager", financemanager);
 app.use("/sendmail", sendmail);
 app.use("/payment", payment);
 
-app.listen(5000, () => {
-  console.log("Server is running on port 5000");
+const initializeDatabase = require("./initializeDB");
+
+(async () => {
+  await initializeDatabase();
+  console.log("Database setup complete.");
+})();
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
