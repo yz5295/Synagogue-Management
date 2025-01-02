@@ -150,7 +150,7 @@ const DateComponent = () => {
           <div className="title-box">
             <div className="date">{hebrewDate || "טוען תאריך עברי..."}</div>
             <div className="parashaholday">
-              {showParasha
+              {showParasha || holidays.length === 0
                 ? parasha || "טוען פרשת השבוע..."
                 : holidays.length > 0
                 ? holidays[currentHolidayIndex]
