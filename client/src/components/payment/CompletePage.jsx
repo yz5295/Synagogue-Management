@@ -35,11 +35,11 @@ export default function CompletePage({ paymentStatus }) {
         status={resultStatus}
         title={resultTitle}
         subTitle={resultMessage}
-        extra={
-          <Button type="primary" onClick={resetForm}>
-            חזור
-          </Button>
-        }
+        // extra={
+        //   <Button type="primary" onClick={resetForm}>
+        //     חזור
+        //   </Button>
+        // }
       />
     </div>
   );
