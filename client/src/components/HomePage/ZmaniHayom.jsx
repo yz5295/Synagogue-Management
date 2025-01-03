@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import axios from "axios";
 import "../../style/ZmaniHayom.css";
 
@@ -84,7 +86,11 @@ const ZmaniHayom = () => {
   };
 
   if (loading) {
-    return <div className="loading">טעינה...</div>;
+    return (
+      <div style={{ textAlign: "center" }}>
+        <Spin indicator={<LoadingOutlined spin />} />
+      </div>
+    );
   }
 
   if (error) {

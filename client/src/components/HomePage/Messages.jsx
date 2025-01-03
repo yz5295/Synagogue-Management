@@ -43,11 +43,8 @@ const Messages = () => {
         allMessages = [...allMessages, ...holidayMsgsToAdd];
       }
 
-      setMessages(allMessages);
+      setMessages(response.headers);
     } catch (error) {
-      console.error("שגיאה בטעינת ההודעות:", error);
-      alert(error);
-      setMessages(error.stack);
     } finally {
       setLoading(false);
     }

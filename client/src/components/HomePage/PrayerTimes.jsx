@@ -31,6 +31,8 @@ const PrayerTimes = ({ type }) => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          height: "100vh",
+          width: "100%",
         }}
       >
         <Spin indicator={<LoadingOutlined spin />} />
