@@ -42,7 +42,6 @@ const Messages = () => {
         }));
         allMessages = [...allMessages, ...holidayMsgsToAdd];
       }
-      alert(response.headers);
       setMessages(allMessages);
     } catch (error) {
     } finally {
