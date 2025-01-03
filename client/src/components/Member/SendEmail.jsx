@@ -14,7 +14,7 @@ function SendEmail({ to, subject, text }) {
       try {
         console.log("Sending email:", { to, subject, text, senderName });
 
-        const settingsResponse = await fetch("/settings");
+        const settingsResponse = await fetch(`${API_URL}/settings`);
         if (!settingsResponse.ok) throw new Error("Failed to fetch settings");
         const settingsData = await settingsResponse.json();
 

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import "../../style/PrayerTimes.css";
 import API_URL from "../../config";
 
@@ -24,8 +26,8 @@ const PrayerTimes = ({ type }) => {
 
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="spinner">טוען...</div>
+      <div style={{ textAlign: "center" }}>
+        <Spin indicator={<LoadingOutlined spin />} />
       </div>
     );
   }

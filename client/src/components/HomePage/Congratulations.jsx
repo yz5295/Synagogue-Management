@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Spin, message } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import axios from "axios";
 import "../../style/Congratulations.css";
 import API_URL from "../../config";
@@ -25,8 +26,8 @@ const Congratulations = () => {
 
   if (loading) {
     return (
-      <div style={{ textAlign: "center", marginTop: 50 }}>
-        <Spin size="large" />
+      <div style={{ textAlign: "center" }}>
+        <Spin indicator={<LoadingOutlined spin />} />
       </div>
     );
   }

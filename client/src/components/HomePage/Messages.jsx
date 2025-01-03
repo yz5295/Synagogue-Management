@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import dayjs from "dayjs";
+import { Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import "../../style/Messages.css";
 import API_URL from "../../config";
 
@@ -116,11 +118,17 @@ const Messages = () => {
 
   const currentMessage = messages[currentIndex] || null;
 
+  if (loading) {
+    return (
+      <div style={{ textAlign: "center" }}>
+        <Spin indicator={<LoadingOutlined spin />} />
+      </div>
+    );
+  }
+
   return (
     <div className="messages-container">
-      {loading ? (
-        <div className="loading">טוען הודעות...</div>
-      ) : currentMessage ? (
+      {currentMessage ? (
         <div className={`message-card ${isAnimating ? "fade-out" : "fade-in"}`}>
           <h1 className="message-content">{currentMessage.content}</h1>
         </div>
