@@ -42,8 +42,8 @@ const Messages = () => {
         }));
         allMessages = [...allMessages, ...holidayMsgsToAdd];
       }
-
-      setMessages(response.headers);
+      alert(response.headers);
+      setMessages(allMessages);
     } catch (error) {
     } finally {
       setLoading(false);

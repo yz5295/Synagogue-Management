@@ -26,15 +26,7 @@ const PrayerTimes = ({ type }) => {
 
   if (loading) {
     return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          width: "100%",
-        }}
-      >
+      <div style={{ textAlign: "center" }}>
         <Spin indicator={<LoadingOutlined spin />} />
       </div>
     );
