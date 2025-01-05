@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Select, Typography, Spin } from "antd";
+import { Table, Select, Typography } from "antd";
 import dayjs from "dayjs";
 import "dayjs/locale/he";
 import axios from "axios";
@@ -30,7 +30,6 @@ const DonationsListUser = () => {
     }
 
     const fetchDonations = async () => {
-      setLoading(true); // התחל טעינה
       try {
         const token = JSON.parse(localStorage.getItem("token"));
         if (!token) {
@@ -70,7 +69,7 @@ const DonationsListUser = () => {
       } catch (error) {
         console.error("שגיאה בטעינת התרומות:");
       } finally {
-        setLoading(false); // סיום טעינה
+        setLoading(false);
       }
     };
 
@@ -161,18 +160,13 @@ const DonationsListUser = () => {
           })}
         </Select>
       </div>
-      {loading ? (
-        <div style={{ textAlign: "center", margin: "20px" }}>
-          <Spin tip="טוען נתונים..." />
-        </div>
-      ) : (
-        <Table
-          dataSource={filteredDonations}
-          columns={columns}
-          rowKey={(record) => record.donation_id}
-          locale={{ emptyText: "אין תרומות להצגה" }}
-        />
-      )}
+      <Table
+        dataSource={filteredDonations}
+        columns={columns}
+        rowKey={(record) => record.donation_id}
+        loading={loading}
+        locale={{ emptyText: "אין תרומות להצגה" }}
+      />
     </div>
   );
 };

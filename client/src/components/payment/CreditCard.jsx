@@ -84,7 +84,14 @@ export default function CreditCard({
           )}
         </Elements>
       ) : (
-        <p style={{ textAlign: "center", direction: "rtl" }}>
+        <p
+          style={{
+            textAlign: "center",
+            direction: "rtl",
+            fontSize: "16px",
+            marginTop: "15px",
+          }}
+        >
           טוען אמצעי תשלום...
         </p>
       )}

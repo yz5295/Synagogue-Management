@@ -15,6 +15,7 @@ const DonationList = () => {
   const [selectedYear, setSelectedYear] = useState(dayjs().year());
   const [selectedPurpose, setSelectedPurpose] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDonations = async () => {
@@ -54,6 +55,8 @@ const DonationList = () => {
         setSearchParams({ month: urlMonth, year: urlYear });
       } catch (error) {
         message.error("שגיאה בהבאת תרומות:");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -197,6 +200,7 @@ const DonationList = () => {
         columns={columns}
         rowKey={(record) => `${record.date}-${record.purpose}`}
         bordered
+        loading={loading}
         locale={{ emptyText: "אין נתונים להצגה" }}
         style={{ overflowX: "auto" }}
       />

@@ -14,6 +14,7 @@ import {
   Col,
   Descriptions,
   message,
+  Spin,
 } from "antd";
 
 import { DownloadOutlined } from "@ant-design/icons";
@@ -44,6 +45,8 @@ const FinanceManager = () => {
   const [totalIncome, setTotalIncome] = useState();
   const [totalExpense, setTotalExpense] = useState();
   const [information, setInformation] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadingData, setLoadingData] = useState(true);
   const [startDate, setStartDate] = useState(
     dayjs().startOf("month").format("YYYY-MM-DD")
   );
@@ -84,9 +87,11 @@ const FinanceManager = () => {
       const response = await axios.get(`${API_URL}/financemanager`);
       setData(response.data);
       filterData(response.data, [startDate, endDate]);
-      updateFinanceManager();
+      await updateFinanceManager();
     } catch (error) {
       message.error("שגיאה בהבאת נתונים:");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -200,7 +205,6 @@ const FinanceManager = () => {
 
   const handleDetails = (record) => {
     const orginalid = record.original_id;
-    console.log(record);
     if (record.category === "תרומה") {
       const fetchDonations = async () => {
         try {
@@ -217,6 +221,8 @@ const FinanceManager = () => {
           }
         } catch (error) {
           console.error("שגיאה בטעינת תרומות");
+        } finally {
+          setLoadingData(false);
         }
       };
       fetchDonations();
@@ -236,6 +242,8 @@ const FinanceManager = () => {
           }
         } catch (error) {
           console.error("שגיאה בטעינת אירועים");
+        } finally {
+          setLoadingData(false);
         }
       };
       fetchEvents();
@@ -383,6 +391,7 @@ const FinanceManager = () => {
         columns={columns}
         dataSource={filteredData}
         rowKey="id"
+        loading={loading}
         locale={{ emptyText: "אין נתונים להצגה" }}
       />
       <Card
@@ -445,27 +454,33 @@ const FinanceManager = () => {
         onCancel={() => setIsViewModalVisible(false)}
         footer={null}
       >
-        <Descriptions bordered column={1}>
-          <Descriptions.Item label="שם פרטי">
-            {information.first_name}
-          </Descriptions.Item>
-          <Descriptions.Item label="שם משפחה">
-            {information.last_name}
-          </Descriptions.Item>
-          <Descriptions.Item label="אימייל">
-            {information.email}
-          </Descriptions.Item>
-          <Descriptions.Item label="טלפון">
-            {information.phone}
-          </Descriptions.Item>
-          <Descriptions.Item label="מטרה">
-            {information.purpose || information.eventType}
-          </Descriptions.Item>
-          <Descriptions.Item label="תאריך">
-            {new Date(information.date).toLocaleDateString("he-IL")}
-          </Descriptions.Item>
-          <Descriptions.Item label="סכום">{`${information.amount} ₪`}</Descriptions.Item>
-        </Descriptions>
+        {loading ? (
+          <div style={{ textAlign: "center", padding: "20px" }}>
+            <Spin tip="טוען נתונים..." />
+          </div>
+        ) : (
+          <Descriptions bordered column={1}>
+            <Descriptions.Item label="שם פרטי">
+              {information.first_name}
+            </Descriptions.Item>
+            <Descriptions.Item label="שם משפחה">
+              {information.last_name}
+            </Descriptions.Item>
+            <Descriptions.Item label="אימייל">
+              {information.email}
+            </Descriptions.Item>
+            <Descriptions.Item label="טלפון">
+              {information.phone}
+            </Descriptions.Item>
+            <Descriptions.Item label="מטרה">
+              {information.purpose || information.eventType}
+            </Descriptions.Item>
+            <Descriptions.Item label="תאריך">
+              {new Date(information.date).toLocaleDateString("he-IL")}
+            </Descriptions.Item>
+            <Descriptions.Item label="סכום">{`${information.amount} ₪`}</Descriptions.Item>
+          </Descriptions>
+        )}
       </Modal>
 
       <Modal

@@ -6,6 +6,7 @@ import API_URL from "../../config";
 const MemberList = () => {
   const [users, setUsers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -18,6 +19,8 @@ const MemberList = () => {
       setUsers(data);
     } catch (error) {
       message.error("שגיאה בטעינת נתוני מתפללים");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -77,6 +80,7 @@ const MemberList = () => {
         columns={columns}
         dataSource={users}
         rowKey={(record, index) => index}
+        loading={loading}
         style={{ marginTop: "20px" }}
         locale={{ emptyText: "אין נתונים להצגה" }}
       />

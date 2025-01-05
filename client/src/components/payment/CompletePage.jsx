@@ -1,9 +1,11 @@
 import React from "react";
 import { Result, Button } from "antd";
 import "antd/dist/reset.css";
+import { useNavigate } from "react-router-dom";
 // import "./App.css";
 
 export default function CompletePage({ paymentStatus }) {
+  const navigate = useNavigate();
   let resultStatus, resultTitle, resultMessage;
 
   switch (paymentStatus) {
@@ -26,7 +28,7 @@ export default function CompletePage({ paymentStatus }) {
   }
 
   const resetForm = () => {
-    window.location.href = "/member";
+    navigate("/member");
   };
 
   return (
@@ -35,11 +37,11 @@ export default function CompletePage({ paymentStatus }) {
         status={resultStatus}
         title={resultTitle}
         subTitle={resultMessage}
-        // extra={
-        //   <Button type="primary" onClick={resetForm}>
-        //     חזור
-        //   </Button>
-        // }
+        extra={
+          <Button type="primary" onClick={resetForm}>
+            חזור
+          </Button>
+        }
       />
     </div>
   );

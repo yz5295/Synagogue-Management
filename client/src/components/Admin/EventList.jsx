@@ -8,6 +8,7 @@ import {
   Select,
   message,
   Descriptions,
+  Spin,
 } from "antd";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import dayjs from "dayjs";
@@ -27,6 +28,7 @@ const EventList = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const currentYear = dayjs().year();
@@ -47,6 +49,8 @@ const EventList = () => {
       filterEventsByDate(eventsData, month, year);
     } catch (error) {
       message.error("שגיאה בהבאת אירועים");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -161,10 +165,12 @@ const EventList = () => {
           })}
         </Select>
       </div>
+
       <Table
         dataSource={filteredEvents}
         columns={columns}
         rowKey="id"
+        loading={loading}
         locale={{ emptyText: "אין נתונים להצגה" }}
       />
       {selectedEvent && (
@@ -174,36 +180,42 @@ const EventList = () => {
           onCancel={handleCancel}
           footer={null}
         >
-          <Descriptions bordered column={1}>
-            <Descriptions.Item label="שם מזמין">
-              {selectedEvent.first_name || selectedEvent.last_name
-                ? `${selectedEvent.first_name || ""} ${
-                    selectedEvent.last_name || ""
-                  }`
-                : "לא זמין"}
-            </Descriptions.Item>
-            <Descriptions.Item label="טלפון">
-              {selectedEvent.phone || "לא זמין"}
-            </Descriptions.Item>
-            <Descriptions.Item label="אימייל">
-              {selectedEvent.email || "לא זמין"}
-            </Descriptions.Item>
-            <Descriptions.Item label="תאריך">
-              {dayjs(selectedEvent.date).format(DATE_FORMAT)}
-            </Descriptions.Item>
-            <Descriptions.Item label="שעת התחלה">
-              {selectedEvent.startTime}
-            </Descriptions.Item>
-            <Descriptions.Item label="שעת סיום">
-              {selectedEvent.endTime}
-            </Descriptions.Item>
-            <Descriptions.Item label="כמות ארוחות">
-              {selectedEvent.mealCount}
-            </Descriptions.Item>
-            <Descriptions.Item label="מחיר כולל">
-              {selectedEvent.amount} ₪
-            </Descriptions.Item>
-          </Descriptions>
+          {loading ? (
+            <div style={{ textAlign: "center", padding: "20px" }}>
+              <Spin tip="טוען נתונים..." />
+            </div>
+          ) : (
+            <Descriptions bordered column={1}>
+              <Descriptions.Item label="שם מזמין">
+                {selectedEvent.first_name || selectedEvent.last_name
+                  ? `${selectedEvent.first_name || ""} ${
+                      selectedEvent.last_name || ""
+                    }`
+                  : "לא זמין"}
+              </Descriptions.Item>
+              <Descriptions.Item label="טלפון">
+                {selectedEvent.phone || "לא זמין"}
+              </Descriptions.Item>
+              <Descriptions.Item label="אימייל">
+                {selectedEvent.email || "לא זמין"}
+              </Descriptions.Item>
+              <Descriptions.Item label="תאריך">
+                {dayjs(selectedEvent.date).format(DATE_FORMAT)}
+              </Descriptions.Item>
+              <Descriptions.Item label="שעת התחלה">
+                {selectedEvent.startTime}
+              </Descriptions.Item>
+              <Descriptions.Item label="שעת סיום">
+                {selectedEvent.endTime}
+              </Descriptions.Item>
+              <Descriptions.Item label="כמות ארוחות">
+                {selectedEvent.mealCount}
+              </Descriptions.Item>
+              <Descriptions.Item label="מחיר כולל">
+                {selectedEvent.amount} ₪
+              </Descriptions.Item>
+            </Descriptions>
+          )}
         </Modal>
       )}
     </div>

@@ -23,8 +23,8 @@ const AddCongratulations = () => {
   };
 
   const addMessage = async () => {
-    if (congratulations.length >= 5) {
-      antdMessage.warning("לא ניתן להוסיף יותר מחמש הודעות");
+    if (congratulations.length >= 4) {
+      antdMessage.warning("לא ניתן להוסיף יותר מארבע הודעות");
       return;
     }
     if (!newMessage.trim()) {
@@ -32,12 +32,9 @@ const AddCongratulations = () => {
       return;
     }
     try {
-      const response = await axios.post(
-        `${API_URL}/congratulations`,
-        {
-          message: newMessage,
-        }
-      );
+      const response = await axios.post(`${API_URL}/congratulations`, {
+        message: newMessage,
+      });
       setCongratulations((prev) => [...prev, response.data]);
       setNewMessage("");
       antdMessage.success("ההודעה נוספה בהצלחה");

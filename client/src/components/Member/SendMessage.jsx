@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Form, Input, Button, Typography, Card, Result } from "antd";
 import { SendOutlined } from "@ant-design/icons";
 import axios from "axios";
-import SendEmail from "./SendEmail";
+import { useNavigate } from "react-router-dom";
 import API_URL from "../../config";
 
 const { Title } = Typography;
@@ -16,6 +16,7 @@ const SendMessage = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [userEmail, setUserEmail] = useState("");
 
+  const navigate = useNavigate();
   const [form] = Form.useForm();
 
   const token = JSON.parse(localStorage.getItem("token"));
@@ -72,6 +73,7 @@ const SendMessage = () => {
   const handleModalClose = () => {
     setModalVisible(false);
     setIsSuccess(false);
+    navigate("/member");
   };
 
   return (
@@ -133,12 +135,7 @@ const SendMessage = () => {
           subTitle={modalMessage}
           extra={
             <Button type="primary" onClick={handleModalClose}>
-              חזור לטופס
-              <SendEmail
-                to={userEmail}
-                subject="כותרת המייל"
-                text="זהו תוכן המייל שנשלח אוטומטית"
-              />
+              חזור
             </Button>
           }
         />
