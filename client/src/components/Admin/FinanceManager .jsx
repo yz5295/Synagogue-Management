@@ -191,7 +191,6 @@ const FinanceManager = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data.message);
       } else {
         console.error("עדכון נתונים נכשל");
       }
@@ -368,7 +367,6 @@ const FinanceManager = () => {
             }}
             style={{ width: "100%" }}
           />{" "}
-          {console.log("12")}
         </div>
 
         <Button
