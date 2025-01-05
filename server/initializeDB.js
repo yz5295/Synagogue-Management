@@ -1,4 +1,4 @@
-const pool = require("./config/db"); // ייבוא החיבור ל-MySQL
+const pool = require("./config/db");
 
 const initializeDatabase = async () => {
   try {
@@ -29,9 +29,9 @@ const initializeDatabase = async () => {
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         time TIME NOT NULL,
-        day_type ENUM('weekday', 'shabbat') NOT NULL
-      )`,
-      `CREATE TABLE IF NOT EXISTS settings (
+        day_type ENUM('weekday', 'shabbat') NOT NULL,
+        order_index INT NOT NULL DEFAULT 0
+      )``CREATE TABLE IF NOT EXISTS settings (
         id INT AUTO_INCREMENT PRIMARY KEY,
         synagogue_name VARCHAR(255) NOT NULL,
         manager_name VARCHAR(255) NOT NULL,

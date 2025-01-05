@@ -187,17 +187,15 @@ const EventList = () => {
           ) : (
             <Descriptions bordered column={1}>
               <Descriptions.Item label="שם מזמין">
-                {selectedEvent.first_name || selectedEvent.last_name
-                  ? `${selectedEvent.first_name || ""} ${
-                      selectedEvent.last_name || ""
-                    }`
-                  : "לא זמין"}
+                {`${selectedEvent.first_name || ""} ${
+                  selectedEvent.last_name || ""
+                }`}
               </Descriptions.Item>
               <Descriptions.Item label="טלפון">
-                {selectedEvent.phone || "לא זמין"}
+                {selectedEvent.phone}
               </Descriptions.Item>
               <Descriptions.Item label="אימייל">
-                {selectedEvent.email || "לא זמין"}
+                {selectedEvent.email}
               </Descriptions.Item>
               <Descriptions.Item label="תאריך">
                 {dayjs(selectedEvent.date).format(DATE_FORMAT)}

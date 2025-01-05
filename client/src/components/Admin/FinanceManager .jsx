@@ -84,10 +84,10 @@ const FinanceManager = () => {
 
   const fetchData = async () => {
     try {
+      await updateFinanceManager();
       const response = await axios.get(`${API_URL}/financemanager`);
       setData(response.data);
       filterData(response.data, [startDate, endDate]);
-      await updateFinanceManager();
     } catch (error) {
       message.error("שגיאה בהבאת נתונים:");
     } finally {
@@ -102,11 +102,8 @@ const FinanceManager = () => {
     const startD = dayjs(start).startOf("day");
     const endD = dayjs(end).endOf("day");
 
-    setStartDate(startD.format("YYYY-MM-DD"));
-    setEndDate(endD.format("YYYY-MM-DD"));
-    console.log(startD.format("YYYY-MM-DD"), endD.format("YYYY-MM-DD"));
-
-    console.log(startDate, endDate);
+    setStartDate(startD.format("DD-MM-YYYY"));
+    setEndDate(endD.format("DD-MM-YYYY"));
 
     const filtered = data.filter((item) => {
       const itemDate = dayjs(item.date);
@@ -128,10 +125,10 @@ const FinanceManager = () => {
   const calculateTotals = (data) => {
     const income = data
       .filter((item) => item.type === "income")
-      .reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0); // המרה למספר עם parseFloat
+      .reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
     const expense = data
       .filter((item) => item.type === "expense")
-      .reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0); // המרה למספר עם parseFloat
+      .reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
 
     setTotalIncome(income);
     setTotalExpense(expense);
@@ -396,6 +393,7 @@ const FinanceManager = () => {
       />
       <Card
         bordered={false}
+        loading={loading}
         style={{ width: 600, margin: "2px auto", background: "" }}
       >
         {(totalIncome === 0 ||
@@ -412,7 +410,7 @@ const FinanceManager = () => {
             <Title level={4} style={{ textAlign: "center" }}>
               הוצאות והכנסות מ-{startDate} עד {endDate}
             </Title>
-            <Row gutter={24} justify="center">
+            <Row gutter={24} justify="center" style={{ marginTop: "28px" }}>
               <Col span={8} style={{ textAlign: "center" }}>
                 <h3>
                   סה"כ הכנסות:{" "}
@@ -450,11 +448,12 @@ const FinanceManager = () => {
       </Card>
 
       <Modal
-        visible={isViewModalVisible} // מודל תצוגת פריט
+        title={`מידע`} // מודל תצוגת פריט
+        visible={isViewModalVisible}
         onCancel={() => setIsViewModalVisible(false)}
         footer={null}
       >
-        {loading ? (
+        {loadingData ? (
           <div style={{ textAlign: "center", padding: "20px" }}>
             <Spin tip="טוען נתונים..." />
           </div>
