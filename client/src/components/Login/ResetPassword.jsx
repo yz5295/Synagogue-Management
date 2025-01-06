@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import API_URL from "../../config";
 
 const ResetPassword = () => {
   const { token } = useParams();
@@ -40,7 +41,7 @@ const ResetPassword = () => {
 
     try {
       const response = await fetch(
-        `https://synagogue-management.netlify.app/forgot-password/reset-password/${token}`,
+        `${API_URL}/forgot-password/reset-password/${token}`,
         {
           method: "POST",
           headers: {

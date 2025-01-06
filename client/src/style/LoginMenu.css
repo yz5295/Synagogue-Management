@@ -83,12 +83,12 @@
 }
 
 .modal-content-simple {
-  width: 320px;
+  width: 310px;
   height: auto;
 }
 
 .modal-content-simple2 {
-  width: 320px;
+  width: 310px;
   height: auto;
   max-height: 90vh;
   overflow-y: auto;
