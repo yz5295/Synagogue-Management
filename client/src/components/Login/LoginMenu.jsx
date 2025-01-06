@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "../../style/LoginMenu.css";
 import axios from "axios";
 import API_URL from "../../config";
+import ForgotPassword from "./ForgotPassword";
 
 function LoginMenu({ menuOpen, toggleMenu }) {
   const navigate = useNavigate();
@@ -12,6 +13,8 @@ function LoginMenu({ menuOpen, toggleMenu }) {
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] =
+    useState(false);
 
   const [isSuccessVisible, setIsSuccessVisible] = useState(false);
   const [isSavedSettings, setIsSavedSettings] = useState(false);
@@ -256,9 +259,6 @@ function LoginMenu({ menuOpen, toggleMenu }) {
         password,
       });
 
-      console.log("API URL:", process.env.REACT_APP_API_URL);
-      console.log("API URL 2:", API_URL);
-
       if (response.status === 201) {
         setRegistrationSuccess(true);
         setRegisterError("");
@@ -293,6 +293,14 @@ function LoginMenu({ menuOpen, toggleMenu }) {
         [name]: value,
       }));
     }
+  };
+
+  const handleOpenForgotPasswordModal = () => {
+    setIsForgotPasswordModalOpen(true);
+  };
+
+  const handleCloseForgotPasswordModal = () => {
+    setIsForgotPasswordModalOpen(false);
   };
 
   return (
@@ -452,27 +460,43 @@ function LoginMenu({ menuOpen, toggleMenu }) {
             >
               <button onClick={handleMemberSubmit}>כניסה</button>
               <button onClick={handleCloseMemberModal}>סגור</button>
-              <a
-                href="#"
-                onClick={handleOpenRegisterModal}
+              <div
                 style={{
-                  display: "block",
-                  // flexDirection: "column",
-                  textAlign: "left",
-                  paddingTop: "10px",
-                  // justifyContent: "space-between",
-                  position: "relative",
-                  textDecoration: "underline",
-                  color: "black",
-                  cursor: "pointer",
-                  marginTop: "auto",
-                  transition: "color 0.3s ease",
+                  justifyContent: "space-between",
+                  width: "100%",
+                  marginTop: "15px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 }}
-                onMouseEnter={(e) => (e.target.style.color = "gray")}
-                onMouseLeave={(e) => (e.target.style.color = "black")}
               >
-                הרשמה למערכת
-              </a>
+                <a
+                  href="#"
+                  onClick={handleOpenRegisterModal}
+                  onMouseEnter={(e) => (e.target.style.color = "#888")}
+                  onMouseLeave={(e) => (e.target.style.color = "#000")}
+                  style={{
+                    fontSize: "15px",
+                    color: "#000",
+                    transition: "color 0.3s ease",
+                  }}
+                >
+                  הרשמה למערכת
+                </a>
+                <a
+                  href="#"
+                  onClick={handleOpenForgotPasswordModal}
+                  onMouseEnter={(e) => (e.target.style.color = "#888")}
+                  onMouseLeave={(e) => (e.target.style.color = "#000")}
+                  style={{
+                    fontSize: "15px",
+                    color: "#000",
+                    transition: "color 0.3s ease",
+                  }}
+                >
+                  שכחת את הסיסמה?
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -562,6 +586,23 @@ function LoginMenu({ menuOpen, toggleMenu }) {
                 <button onClick={handleCloseRegisterModal}>סגור</button>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {isForgotPasswordModalOpen && (
+        <div className="modal-overlay-simple">
+          <div
+            className="modal-content-simple2"
+            style={{ position: "relative" }}
+          >
+            <ForgotPassword onClose={handleCloseForgotPasswordModal} />
+            <button
+              className="close-button-forgat"
+              onClick={handleCloseForgotPasswordModal}
+            >
+              ×
+            </button>
           </div>
         </div>
       )}

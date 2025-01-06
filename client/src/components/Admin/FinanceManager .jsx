@@ -35,25 +35,23 @@ const { Title, Text } = Typography;
 const FinanceManager = () => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [month, setMonth] = useState(dayjs().month() + 1);
-  const [year, setYear] = useState(dayjs().year());
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [currentDetails, setCurrentDetails] = useState(null);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
-  const [form] = Form.useForm();
-  const [totalIncome, setTotalIncome] = useState();
-  const [totalExpense, setTotalExpense] = useState();
-  const [information, setInformation] = useState([]);
+  const [addForm] = Form.useForm();
+  const [editForm] = Form.useForm();
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [totalExpense, setTotalExpense] = useState(0);
+  const [information, setInformation] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [loadingData, setLoadingData] = useState(true);
-  const [startDate, setStartDate] = useState(
-    dayjs().startOf("month").format("YYYY-MM-DD")
-  );
-  const [endDate, setEndDate] = useState(
-    dayjs().endOf("month").format("YYYY-MM-DD")
-  );
-  const [dateRange, setDateRange] = useState();
+  const [loadingData, setLoadingData] = useState(false);
+  const [startDate, setStartDate] = useState(dayjs().startOf("month"));
+  const [endDate, setEndDate] = useState(dayjs().endOf("month"));
+  const [dateRange, setDateRange] = useState([
+    dayjs().startOf("month"),
+    dayjs().endOf("month"),
+  ]);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -69,25 +67,21 @@ const FinanceManager = () => {
   }, []);
 
   useEffect(() => {
-    if (currentDetails) {
-      form.setFieldsValue({
-        ...currentDetails,
-        date: currentDetails.date ? dayjs(currentDetails.date) : undefined,
-      });
-    }
     filterData(data, dateRange);
     if (dateRange) {
       updateURL(dateRange[0], dateRange[1]);
     }
-    updateFinanceManager();
-  }, [data, month, year, dateRange, currentDetails, form, dateRange]);
+  }, [data, dateRange]);
 
   const fetchData = async () => {
     try {
       await updateFinanceManager();
       const response = await axios.get(`${API_URL}/financemanager`);
-      setData(response.data);
-      filterData(response.data, [startDate, endDate]);
+      const sortedData = response.data.sort(
+        (a, b) => dayjs(a.date).unix() - dayjs(b.date).unix()
+      );
+      setData(sortedData);
+      filterData(sortedData, dateRange);
     } catch (error) {
       message.error("שגיאה בהבאת נתונים:");
     } finally {
@@ -102,8 +96,8 @@ const FinanceManager = () => {
     const startD = dayjs(start).startOf("day");
     const endD = dayjs(end).endOf("day");
 
-    setStartDate(startD.format("DD-MM-YYYY"));
-    setEndDate(endD.format("DD-MM-YYYY"));
+    setStartDate(startD);
+    setEndDate(endD);
 
     const filtered = data.filter((item) => {
       const itemDate = dayjs(item.date);
@@ -111,8 +105,12 @@ const FinanceManager = () => {
       return isInDateRange;
     });
 
-    setFilteredData(filtered);
-    calculateTotals(filtered);
+    const sortedFiltered = filtered.sort(
+      (a, b) => dayjs(a.date).unix() - dayjs(b.date).unix()
+    );
+
+    setFilteredData(sortedFiltered);
+    calculateTotals(sortedFiltered);
   };
 
   const updateURL = (start, end) => {
@@ -135,11 +133,11 @@ const FinanceManager = () => {
   };
 
   const handleAdd = async (values) => {
-    form.resetFields();
+    addForm.resetFields();
     const newEntry = {
       id: Date.now(),
       ...values,
-      date: values.date.toISOString(),
+      date: values.date.format("YYYY-MM-DD"),
       readOnly: false,
     };
     try {
@@ -147,8 +145,9 @@ const FinanceManager = () => {
       fetchData();
 
       setIsAddModalVisible(false);
+      message.success("נתונים נשמרו בהצלחה");
     } catch (error) {
-      message.error("שגיאה בהוספת ערך");
+      message.error("שגיאה בהוספת נתונים");
     }
   };
 
@@ -157,7 +156,7 @@ const FinanceManager = () => {
       const updatedEntry = {
         ...currentDetails,
         ...values,
-        date: values.date.toISOString(),
+        date: values.date.format("YYYY-MM-DD"),
       };
       await axios.put(
         `${API_URL}/financemanager/${currentDetails.id}`,
@@ -166,8 +165,9 @@ const FinanceManager = () => {
       fetchData();
       setIsEditModalVisible(false);
       setCurrentDetails(null);
+      message.success("נתונים עודכנו בהצלחה");
     } catch (error) {
-      message.error("שגיאה בעדכון הערך");
+      message.error("שגיאה בעדכון הנתונים");
     }
   };
 
@@ -175,8 +175,9 @@ const FinanceManager = () => {
     try {
       await axios.delete(`${API_URL}/financemanager/${id}`);
       fetchData();
+      message.success("הנתון נמחק בהצלחה");
     } catch (error) {
-      message.error("שגיאה במחיקת הערך");
+      message.error("שגיאה במחיקת הנתון");
     }
   };
 
@@ -199,67 +200,61 @@ const FinanceManager = () => {
     }
   }
 
-  const handleDetails = (record) => {
-    const orginalid = record.original_id;
-    if (record.category === "תרומה") {
-      const fetchDonations = async () => {
-        try {
-          const response = await axios.get(`${API_URL}/donation`);
-          const data = response.data;
-          const matchedDonation = data.find(
-            (donation) => donation.donation_id === orginalid
-          );
-          if (matchedDonation) {
-            setInformation(matchedDonation);
-            console.log(information);
-          } else {
-            console.warn("No matching donation found for the given ID");
-          }
-        } catch (error) {
-          console.error("שגיאה בטעינת תרומות");
-        } finally {
-          setLoadingData(false);
-        }
-      };
-      fetchDonations();
-    }
-
-    if (record.category === "הזמנת אולם") {
-      const fetchEvents = async () => {
-        try {
-          const response = await axios.get(`${API_URL}/eventlist/events`);
-          const data = response.data;
-
-          const matchedEvents = data.find((event) => event.id === orginalid);
-          if (matchedEvents) {
-            setInformation(matchedEvents);
-          } else {
-            console.warn("No matching event found for the given ID");
-          }
-        } catch (error) {
-          console.error("שגיאה בטעינת אירועים");
-        } finally {
-          setLoadingData(false);
-        }
-      };
-      fetchEvents();
-    }
-
-    setCurrentDetails(record);
+  const handleDetails = async (record) => {
     setIsViewModalVisible(true);
+    setLoadingData(true);
+    setInformation(null);
+
+    const orginalid = record.original_id;
+
+    try {
+      if (record.category === "תרומה") {
+        const response = await axios.get(`${API_URL}/donation`);
+        const data = response.data;
+        const matchedDonation = data.find(
+          (donation) => donation.donation_id === orginalid
+        );
+        if (matchedDonation) {
+          setInformation(matchedDonation);
+        } else {
+          console.warn("No matching donation found for the given ID");
+        }
+      } else if (record.category === "הזמנת אולם") {
+        const response = await axios.get(`${API_URL}/eventlist/events`);
+        const data = response.data;
+        const matchedEvent = data.find((event) => event.id === orginalid);
+        if (matchedEvent) {
+          setInformation(matchedEvent);
+        } else {
+          console.warn("No matching event found for the given ID");
+        }
+      }
+    } catch (error) {
+      console.error("שגיאה בטעינת מידע");
+    } finally {
+      setLoadingData(false);
+    }
   };
 
   const handleEdit = (record) => {
     setCurrentDetails(record);
+    editForm.setFieldsValue({
+      ...record,
+      date: record.date ? dayjs(record.date) : undefined,
+    });
     setIsEditModalVisible(true);
   };
 
   const exportToExcel = () => {
     const XLSX = require("xlsx");
-    const worksheet = XLSX.utils.json_to_sheet(filteredData);
+    const modifiedData = filteredData.map((item) => {
+      const { readOnly, original_id, ...rest } = item;
+      return rest;
+    });
+    const worksheet = XLSX.utils.json_to_sheet(modifiedData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Finance");
-    XLSX.writeFile(workbook, "FinanceData.xlsx");
+    XLSX.writeFile(workbook, "הכנסות והוצאות.xlsx");
   };
 
   const columns = [
@@ -304,7 +299,7 @@ const FinanceManager = () => {
     {
       title: "פעולות",
       key: "actions",
-      width: 120,
+      width: 150,
       render: (_, record) => (
         <Space size="small">
           {!record.readOnly ? (
@@ -355,18 +350,26 @@ const FinanceManager = () => {
           direction: "rtl",
         }}
       >
-        <Button type="primary" onClick={() => setIsAddModalVisible(true)}>
+        <Button
+          type="primary"
+          onClick={() => {
+            setIsAddModalVisible(true);
+            addForm.resetFields();
+          }}
+        >
           הוספה
         </Button>
 
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <RangePicker
+            value={dateRange}
+            format="DD/MM/YYYY"
             placeholder={["בחר תאריך התחלתי", "בחר תאריך סופי"]}
             onChange={(dates) => {
               setDateRange(dates);
             }}
             style={{ width: "100%" }}
-          />{" "}
+          />
         </div>
 
         <Button
@@ -390,9 +393,14 @@ const FinanceManager = () => {
         locale={{ emptyText: "אין נתונים להצגה" }}
       />
       <Card
-        bordered={false}
+        bordered={true}
         loading={loading}
-        style={{ width: 600, margin: "2px auto", background: "" }}
+        style={{
+          margin: "2px auto",
+          background: "#f7f7f7",
+          borderRadius: "12px",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+        }}
       >
         {(totalIncome === 0 ||
           totalIncome === undefined ||
@@ -400,38 +408,86 @@ const FinanceManager = () => {
         (totalExpense === 0 ||
           totalExpense === undefined ||
           isNaN(totalExpense)) ? (
-          <Title level={4} style={{ textAlign: "center" }}>
+          <Title level={5} style={{ textAlign: "center", color: "#888" }}>
             אין נתונים להצגה
           </Title>
         ) : (
           <>
-            <Title level={4} style={{ textAlign: "center" }}>
-              הוצאות והכנסות מ-{startDate} עד {endDate}
+            <Title
+              level={4}
+              style={{
+                textAlign: "center",
+                color: "#333",
+                fontWeight: "600",
+                marginBottom: "20px",
+              }}
+            >
+              הוצאות והכנסות מ-{startDate.format("DD-MM-YYYY")} עד{" "}
+              {endDate.format("DD-MM-YYYY")}
             </Title>
-            <Row gutter={24} justify="center" style={{ marginTop: "28px" }}>
-              <Col span={8} style={{ textAlign: "center" }}>
-                <h3>
+            <Row gutter={24} justify="center">
+              <Col span={8} style={{ textAlign: "center", padding: "10px" }}>
+                <h3
+                  style={{
+                    color: "#2e7d32",
+                    fontWeight: "600",
+                    fontSize: "18px",
+                  }}
+                >
                   סה"כ הכנסות:{" "}
-                  <Text style={{ color: "green", fontWeight: "500" }}>
+                  <Text
+                    style={{
+                      color: "#2e7d32",
+                      fontWeight: "500",
+                      fontSize: "18px",
+                    }}
+                  >
                     {totalIncome}
                   </Text>
                 </h3>
               </Col>
-              <Col span={8} style={{ textAlign: "center" }}>
-                <h3>
+              <Col
+                span={8}
+                style={{
+                  textAlign: "center",
+                  padding: "10px",
+                }}
+              >
+                <h3
+                  style={{
+                    color: "#d32f2f",
+                    fontWeight: "600",
+                    fontSize: "18px",
+                  }}
+                >
                   סה"כ הוצאות:{" "}
-                  <Text style={{ color: "red", fontWeight: "500" }}>
+                  <Text
+                    style={{
+                      color: "#d32f2f",
+                      fontWeight: "500",
+                      fontSize: "18px",
+                    }}
+                  >
                     {totalExpense}-
                   </Text>
                 </h3>
               </Col>
-              <Col span={8} style={{ textAlign: "center" }}>
-                <h3>
+              <Col span={8} style={{ textAlign: "center", padding: "10px" }}>
+                <h3
+                  style={{
+                    color:
+                      totalIncome - totalExpense >= 0 ? "#2e7d32" : "#d32f2f", // צבע שונה לפי יתרה חיובית או שלילית
+                    fontWeight: "600",
+                    fontSize: "18px",
+                  }}
+                >
                   יתרה:{" "}
                   <Text
                     style={{
-                      color: totalIncome - totalExpense >= 0 ? "green" : "red",
+                      color:
+                        totalIncome - totalExpense >= 0 ? "#2e7d32" : "#d32f2f",
                       fontWeight: "500",
+                      fontSize: "18px",
                     }}
                   >
                     {totalIncome - totalExpense < 0
@@ -445,8 +501,9 @@ const FinanceManager = () => {
         )}
       </Card>
 
+      {/* מודל הצגת מידע */}
       <Modal
-        title={`מידע`} // מודל תצוגת פריט
+        title={`מידע`}
         visible={isViewModalVisible}
         onCancel={() => setIsViewModalVisible(false)}
         footer={null}
@@ -455,7 +512,7 @@ const FinanceManager = () => {
           <div style={{ textAlign: "center", padding: "20px" }}>
             <Spin tip="טוען נתונים..." />
           </div>
-        ) : (
+        ) : information ? (
           <Descriptions bordered column={1}>
             <Descriptions.Item label="שם פרטי">
               {information.first_name}
@@ -473,21 +530,28 @@ const FinanceManager = () => {
               {information.purpose || information.eventType}
             </Descriptions.Item>
             <Descriptions.Item label="תאריך">
-              {new Date(information.date).toLocaleDateString("he-IL")}
+              {dayjs(information.date).format("DD/MM/YYYY")}
             </Descriptions.Item>
             <Descriptions.Item label="סכום">{`${information.amount} ₪`}</Descriptions.Item>
           </Descriptions>
+        ) : (
+          <Title level={4} style={{ textAlign: "center" }}>
+            אין נתונים להצגה
+          </Title>
         )}
       </Modal>
 
+      {/* מודל הוספת פריט חדש */}
       <Modal
-        visible={isAddModalVisible} // מודל הוספת פריט חדש
+        visible={isAddModalVisible}
         onCancel={() => setIsAddModalVisible(false)}
         footer={null}
       >
         <div style={{ textAlign: "right" }}>
-          <h3 style={{ textAlign: "center" }}>הוספת פריט חדש</h3>
-          <Form form={form} onFinish={handleAdd} style={{ gap: "10px" }}>
+          <Title level={4} style={{ textAlign: "center" }}>
+            הוספת פריט חדש
+          </Title>
+          <Form form={addForm} onFinish={handleAdd} layout="vertical">
             <Form.Item
               name="type"
               label="סוג"
@@ -539,22 +603,20 @@ const FinanceManager = () => {
         </div>
       </Modal>
 
+      {/* מודל עריכת פריט */}
       <Modal
-        visible={isEditModalVisible} // מודל עריכת פריט
-        onCancel={() => setIsEditModalVisible(false)}
+        visible={isEditModalVisible}
+        onCancel={() => {
+          setIsEditModalVisible(false);
+          setCurrentDetails(null);
+        }}
         footer={null}
       >
         <div style={{ textAlign: "right" }}>
-          <h3 style={{ textAlign: "center" }}>עריכת פריט</h3>
-          <Form
-            form={form}
-            initialValues={{
-              ...currentDetails,
-              date: currentDetails ? dayjs(currentDetails.date) : undefined,
-            }}
-            onFinish={handleEditSave}
-            style={{ gap: "10px" }}
-          >
+          <Title level={4} style={{ textAlign: "center" }}>
+            עריכת פריט
+          </Title>
+          <Form form={editForm} onFinish={handleEditSave} layout="vertical">
             <Form.Item
               name="type"
               label="סוג"

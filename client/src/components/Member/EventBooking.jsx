@@ -86,7 +86,9 @@ const EventBooking = () => {
         const settingsData = await settingsResponse.json();
         setSettings(settingsData);
 
-        const bookedTimesResponse = await fetch(`${API_URL}/eventlist/booked-times`);
+        const bookedTimesResponse = await fetch(
+          `${API_URL}/eventlist/booked-times`
+        );
         const bookedTimesData = await bookedTimesResponse.json();
         setBookedTimes(bookedTimesData);
 
@@ -486,7 +488,7 @@ const EventBooking = () => {
             <strong>אולמי בית הכנסת {settings.synagogueName}</strong>
           </p>
           <p>
-            הזמנה ל: {user.first_name} {user.last_name}
+            הזמנה מאת: {user.first_name} {user.last_name}
           </p>
           <p>סוג האירוע: {eventType}</p>
           <p>בתאריך: {selectedDate ? selectedDate.format("DD-MM-YYYY") : ""}</p>

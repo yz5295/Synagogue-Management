@@ -843,8 +843,7 @@ button {
 
 .congratulations-box div {
   font-size: 14px;
-  /* margin: 5px; */
-  margin-top: -3px;
+  margin-bottom: 3px;
 }
 
 .congratulations-box {

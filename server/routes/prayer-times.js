@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../config/db");
 
-// שליפת התפילות (ממוין לפי order_index)
 router.get("/", async (req, res) => {
   try {
     const [rows] = await pool.query(`

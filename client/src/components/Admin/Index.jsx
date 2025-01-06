@@ -44,11 +44,11 @@ const Index = () => {
               : msg
           )
         );
+        fetchMessages();
       } catch (error) {
         message.error("שגיאה בעדכון הסטטוס של ההודעה");
       }
     }
-    fetchMessages();
   };
 
   const handleArchive = async (messageId) => {

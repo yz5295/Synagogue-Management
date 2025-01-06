@@ -5,7 +5,7 @@ import CheckoutForm from "./CheckoutForm";
 import CompletePage from "./CompletePage";
 import API_URL from "../../config";
 
-import "./payment.css";
+import "../../style/payment.css";
 
 export default function CreditCard({
   amount,

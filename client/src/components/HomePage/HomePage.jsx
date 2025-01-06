@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ZmaniHayom from "./ZmaniHayom";
 import Date from "./Date";
-import LoginMenu from "./LoginMenu";
+import LoginMenu from "../Login/LoginMenu";
 import PrayerTimes from "./PrayerTimes";
 import Messages from "./Messages";
 import Congratulations from "./Congratulations";

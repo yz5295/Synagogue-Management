@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./components/HomePage/HomePage";
 import AdminPage from "./components/Admin/AdminPage";
@@ -19,6 +19,7 @@ import SendMessage from "./components/Member/SendMessage";
 import EditMember from "./components/Member/EditMember";
 import CreditCard from "./components/payment/CreditCard";
 import CompletePage from "./components/payment/CompletePage";
+import ResetPassword from "./components/Login/ResetPassword"; // הוסף את הקומפוננטה של ResetPassword
 
 import "./App.css";
 
@@ -34,7 +35,6 @@ function App() {
           <Route path="member-list" element={<MemberList />} />
           <Route path="donation-list" element={<DonationList />} />
           <Route path="event-list" element={<EventList />} />
-
           <Route path="finance-manager" element={<FinanceManager />} />
           <Route path="inbox" element={<Index />} />
           <Route path="settings" element={<Settings />} />
@@ -46,6 +46,7 @@ function App() {
           <Route path="send-message" element={<SendMessage />} />
           <Route path="edit-member" element={<EditMember />} />
         </Route>
+        <Route path="/reset-password/:token" element={<ResetPassword />} />{" "}
       </Routes>
     </Router>
   );
