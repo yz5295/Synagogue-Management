@@ -48,6 +48,13 @@ router.post("/", async (req, res) => {
   }
 
   try {
+    const checkEmailQuery = "SELECT * FROM users WHERE email = ?";
+    const [existingUser] = await pool.query(checkEmailQuery, [newUser.email]);
+
+    if (existingUser.length > 0) {
+      return res.status(400).json({ error: "המייל כבר קיים במערכת" });
+    }
+
     const hashedPassword = await bcrypt.hash(newUser.password, 10);
 
     const query = `

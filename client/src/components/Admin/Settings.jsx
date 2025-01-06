@@ -10,12 +10,15 @@ import {
   message,
 } from "antd";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import API_URL from "../../config";
 
 const Settings = () => {
   const [form] = Form.useForm();
   const [isSaved, setIsSaved] = useState(false);
   const savedSettings = JSON.parse(localStorage.getItem("settings")) || {};
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     form.setFieldsValue(savedSettings);
@@ -30,14 +33,13 @@ const Settings = () => {
       message.error("שגיאה בשמירת ההגדרות");
     }
 
-    localStorage.setItem("settings", JSON.stringify(values));
     window.dispatchEvent(new Event("settingsUpdated"));
   };
 
   const resetForm = () => {
-    form.resetFields();
-    form.setFieldsValue(savedSettings);
-    setIsSaved(false);
+    navigate("/admin");
+    // form.resetFields();
+    // setIsSaved(false);
   };
 
   return (
@@ -48,8 +50,8 @@ const Settings = () => {
           title="הגדרות נשמרו בהצלחה!"
           subTitle="הנתונים הועברו לשרת ונשמרו בקובץ ההגדרות."
           extra={[
-            <Button type="primary" onClick={resetForm} key="edit">
-              ערוך שוב
+            <Button type="primary" onClick={resetForm}>
+              חזור
             </Button>,
           ]}
         />

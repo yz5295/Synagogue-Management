@@ -140,6 +140,8 @@ const AddMessages = () => {
         visible={isModalVisible}
         onOk={handleModalOk}
         onCancel={handleModalCancel}
+        okText="שמור"
+        cancelText="ביטול"
       >
         <TextArea
           rows={4}

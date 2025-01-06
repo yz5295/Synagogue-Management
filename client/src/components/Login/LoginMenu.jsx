@@ -243,6 +243,11 @@ function LoginMenu({ menuOpen, toggleMenu }) {
       return;
     }
 
+    if (password.length < 6) {
+      setRegisterError("הסיסמה חייבת להכיל לפחות 6 תווים.");
+      return;
+    }
+
     if (password !== confirmPassword) {
       setRegisterError("הסיסמאות אינן תואמות.");
       return;
@@ -271,7 +276,15 @@ function LoginMenu({ menuOpen, toggleMenu }) {
       }
     } catch (error) {
       console.error("שגיאה:", error);
-      setRegisterError("שגיאה בהוספת המתפלל.");
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message === "המייל כבר קיים במערכת"
+      ) {
+        setRegisterError("כתובת המייל כבר קיימת במערכת.");
+      } else {
+        setRegisterError("שגיאה בהוספת המתפלל.");
+      }
     }
   };
 
@@ -567,6 +580,7 @@ function LoginMenu({ menuOpen, toggleMenu }) {
                   onChange={handleRegisterInputChange}
                   placeholder="סיסמה"
                   required
+                  minLength={6}
                 />
                 <input
                   type="password"
@@ -576,11 +590,8 @@ function LoginMenu({ menuOpen, toggleMenu }) {
                   placeholder="אימות סיסמה"
                   required
                 />
-                {registerForm.password !== registerForm.confirmPassword && (
-                  <p className="error-message">הסיסמאות אינן תואמות.</p>
-                )}
                 {registerError && (
-                  <p className="error-message">{registerError}</p>
+                  <div className={`error-message`}>{registerError}</div>
                 )}
                 <button onClick={handleRegisterSubmit}>הרשמה</button>
                 <button onClick={handleCloseRegisterModal}>סגור</button>

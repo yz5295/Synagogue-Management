@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Typography, Card, Result } from "antd";
-import { SendOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import API_URL from "../../config";
@@ -26,8 +26,6 @@ const SendMessage = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUserEmail(response.data.user.email);
-      console.log(response.data.user);
-
       return response.data.user.id;
     } catch (error) {
       message.error("שגיאה בשליפת פרטי המשתמש.");
@@ -71,8 +69,8 @@ const SendMessage = () => {
   };
 
   const handleModalClose = () => {
-    setModalVisible(false);
-    setIsSuccess(false);
+    // setModalVisible(false);
+    // setIsSuccess(false);
     navigate("/member");
   };
 
@@ -120,8 +118,14 @@ const SendMessage = () => {
               <Button
                 type="primary"
                 htmlType="submit"
-                icon={<SendOutlined />}
-                style={{ width: "100%" }}
+                icon={<ArrowLeftOutlined />}
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "row-reverse",
+                  alignItems: "center",
+                  marginRight: "5px",
+                }}
               >
                 שלח הודעה
               </Button>

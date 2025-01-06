@@ -247,13 +247,45 @@ const FinanceManager = () => {
 
   const exportToExcel = () => {
     const XLSX = require("xlsx");
-    const modifiedData = filteredData.map((item) => {
-      const { readOnly, original_id, ...rest } = item;
-      return rest;
-    });
-    const worksheet = XLSX.utils.json_to_sheet(modifiedData);
+
+    const formatDate = (date) => {
+      const d = new Date(date);
+      const day = ("0" + d.getDate()).slice(-2);
+      const month = ("0" + (d.getMonth() + 1)).slice(-2);
+      const year = d.getFullYear();
+      return `${day}/${month}/${year}`;
+    };
+
+    const incomeData = filteredData
+      .filter((item) => item.type === "income")
+      .map((item) => {
+        const { readOnly, original_id, ...rest } = item;
+        if (rest.date) {
+          rest.date = formatDate(rest.date);
+        }
+        return rest;
+      });
+
+    const expenseData = filteredData
+      .filter((item) => item.type === "expense")
+      .map((item) => {
+        const { readOnly, original_id, ...rest } = item;
+        if (rest.date) {
+          rest.date = formatDate(rest.date);
+        }
+        rest.amount = -rest.amount;
+        return rest;
+      });
+
+    const combinedData = [...incomeData, ...expenseData];
+    const combinedWorksheet = XLSX.utils.json_to_sheet(combinedData);
+    const incomeWorksheet = XLSX.utils.json_to_sheet(incomeData);
+    const expenseWorksheet = XLSX.utils.json_to_sheet(expenseData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Finance");
+
+    XLSX.utils.book_append_sheet(workbook, combinedWorksheet, "הכנסות והוצאות");
+    XLSX.utils.book_append_sheet(workbook, incomeWorksheet, "הכנסות");
+    XLSX.utils.book_append_sheet(workbook, expenseWorksheet, "הוצאות");
     XLSX.writeFile(workbook, "הכנסות והוצאות.xlsx");
   };
 

@@ -2,7 +2,6 @@ import React from "react";
 import { Result, Button } from "antd";
 import "antd/dist/reset.css";
 import { useNavigate } from "react-router-dom";
-// import "./App.css";
 
 export default function CompletePage({ paymentStatus }) {
   const navigate = useNavigate();

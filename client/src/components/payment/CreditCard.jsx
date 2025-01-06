@@ -17,6 +17,7 @@ export default function CreditCard({
   const [currentPage, setCurrentPage] = useState("checkout");
   const [stripePromise, setStripePromise] = useState(null);
   const [paymentStatus, setPaymentStatus] = useState(null);
+  const numericAmount = parseInt(amount);
 
   const handleCheckoutComplete = (status) => {
     setPaymentStatus(status);
@@ -38,12 +39,12 @@ export default function CreditCard({
   }, []);
 
   useEffect(() => {
-    if (amount > 2) {
+    if (numericAmount > 2) {
       fetch(`${API_URL}/payment/create-payment-intent`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: [{ amount }],
+          items: [{ numericAmount }],
           customerDetails: customerDetails,
         }),
       })
@@ -58,7 +59,7 @@ export default function CreditCard({
     } else {
       console.log("מינימום תרומה 3 שח");
     }
-  }, [amount]);
+  }, [numericAmount]);
 
   const appearance = {
     theme: "stripe",

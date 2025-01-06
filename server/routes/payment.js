@@ -15,7 +15,7 @@ if (!process.env.STRIPE_ID || !process.env.STRIPE_PUBLISHABLE_KEY) {
 const calculateOrderAmount = (items) => {
   let total = 100;
   items.forEach((item) => {
-    total += item.amount;
+    total += item.numericAmount;
   });
   return total * 100;
 };

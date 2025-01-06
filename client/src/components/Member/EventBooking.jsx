@@ -14,6 +14,7 @@ import {
   message,
   Alert,
   Tooltip,
+  Switch,
 } from "antd";
 import dayjs from "dayjs";
 import "dayjs/locale/he";
@@ -176,8 +177,8 @@ const EventBooking = () => {
     }
   };
 
-  const handleCateringCheck = (e) => {
-    setCatering(e.target.checked);
+  const handleCateringCheck = (checked) => {
+    setCatering(checked);
   };
 
   // חישוב סה"כ
@@ -446,9 +447,12 @@ const EventBooking = () => {
             }}
           >
             <Form.Item style={{ marginTop: 0, marginBottom: 0 }}>
-              <Checkbox checked={catering} onChange={handleCateringCheck}>
-                האם להוסיף קייטרינג?
-              </Checkbox>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <Switch checked={catering} onChange={handleCateringCheck} />
+                <span style={{ marginRight: "8px", marginLeft: "8px" }}>
+                  האם להוסיף קייטרינג?
+                </span>
+              </div>
             </Form.Item>
             <div
               style={{
@@ -456,9 +460,12 @@ const EventBooking = () => {
                 alignItems: "center",
                 gap: "5px",
                 visibility: catering ? "visible" : "hidden",
+                backgroundColor: "rgba(237, 233, 233, 0.54)",
+                borderRadius: "5px",
+                padding: "10px",
               }}
             >
-              <label style={{ margin: 0 }}>מספר מנות:</label>
+              <label style={{ margin: 0, fontWeight: "500" }}>מספר מנות:</label>
               <Form.Item
                 name="mealCount"
                 rules={[{ required: catering, message: "אנא הזן מספר מנות" }]}

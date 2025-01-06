@@ -130,11 +130,11 @@
   color: black;
 }
 
-.error-message {
+/* .error-message {
   color: red;
   font-size: 14px;
   margin-top: 10px;
-}
+} */
 
 .success-message p {
   color: green;
@@ -211,6 +211,19 @@
 
 .submit-button:hover {
   background-color: #e6b800; /* כהה יותר בעת מעבר עכבר */
+}
+
+.error-message {
+  width: calc(100% - 20px);
+  margin-top: 7px;
+  margin-bottom: 3px;
+  margin-right: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  text-align: center;
+  background-color: #f8d7da;
+  color: #721c24;
 }
 
 .message {

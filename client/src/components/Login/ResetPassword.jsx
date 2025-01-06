@@ -27,9 +27,16 @@ const ResetPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!newPassword || !confirmPassword) {
       setMessageType("error");
       setMessage("יש להכניס סיסמה חדשה ואישור סיסמה");
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setMessageType("error");
+      setMessage("הסיסמה חייבת להכיל לפחות 6 ספרות");
       return;
     }
 

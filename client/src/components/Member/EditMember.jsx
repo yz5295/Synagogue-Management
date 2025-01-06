@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, message, Card, Checkbox } from "antd";
+import { Form, Input, Button, message, Card, Switch, Result } from "antd";
 import axios from "axios";
 import API_URL from "../../config";
+import { useNavigate } from "react-router-dom";
 
 const EditMember = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
   const [changePassword, setChangePassword] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(null);
+  const navigate = useNavigate();
 
   const token = JSON.parse(localStorage.getItem("token"));
 
@@ -49,7 +52,7 @@ const EditMember = () => {
       }
 
       const response = await axios.put(
-        `${API_URL}/api/users/${user.id}`,
+        `${API_URL}/users/${user.id}`,
         updateData,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -57,12 +60,12 @@ const EditMember = () => {
       );
 
       if (response.status === 200) {
-        message.success("פרטי המשתמש עודכנו בהצלחה!");
+        setIsSuccess(true);
       } else {
-        message.error("שגיאה בעדכון פרטי המשתמש.");
+        setIsSuccess(false);
       }
     } catch (error) {
-      message.error("שגיאה בעדכון פרטי המשתמש.");
+      setIsSuccess(false);
     } finally {
       setLoading(false);
     }
@@ -74,8 +77,28 @@ const EditMember = () => {
     setChangePassword(false);
   };
 
+  const handleBack = () => {
+    navigate("/member");
+  };
+
   if (!user) {
     return <p>טוען נתונים...</p>;
+  }
+
+  if (isSuccess !== null) {
+    return (
+      <Result
+        status={isSuccess ? "success" : "error"}
+        title={
+          isSuccess ? "פרטי המשתמש עודכנו בהצלחה!" : "שגיאה בעדכון פרטי המשתמש."
+        }
+        extra={[
+          <Button type="primary" onClick={handleBack}>
+            חזור
+          </Button>,
+        ]}
+      />
+    );
   }
 
   return (
@@ -160,12 +183,13 @@ const EditMember = () => {
         </div>
 
         <Form.Item name="changePassword" valuePropName="checked">
-          <Checkbox
-            checked={changePassword}
-            onChange={(e) => setChangePassword(e.target.checked)}
-          >
-            לשנות סיסמה
-          </Checkbox>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Switch
+              checked={changePassword}
+              onChange={(checked) => setChangePassword(checked)}
+            />
+            <span style={{ marginRight: "8px" }}>לשנות סיסמה</span>
+          </div>
         </Form.Item>
 
         {changePassword && (

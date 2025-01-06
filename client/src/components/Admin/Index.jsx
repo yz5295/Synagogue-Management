@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { List, Typography, Button, Modal, message } from "antd";
 import axios from "axios";
 import API_URL from "../../config";
+import { InboxOutlined, EyeOutlined, UserOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
@@ -22,7 +23,6 @@ const Index = () => {
         (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
       );
       setMessages(sortedMessages);
-      console.log(sortedMessages);
     } catch (error) {
       message.error("שגיאה בטעינת ההודעות");
     }
@@ -30,8 +30,6 @@ const Index = () => {
   };
 
   const markAsRead = async (messagee) => {
-    console.log(messagee.message_id);
-
     if (!messagee.read_boolean) {
       try {
         await axios.patch(`${API_URL}/messages/${messagee.message_id}`, {
@@ -44,7 +42,6 @@ const Index = () => {
               : msg
           )
         );
-        fetchMessages();
       } catch (error) {
         message.error("שגיאה בעדכון הסטטוס של ההודעה");
       }
@@ -54,12 +51,12 @@ const Index = () => {
   const handleArchive = async (messageId) => {
     try {
       await axios.post(`${API_URL}/messages/archive`, { id: messageId });
+      fetchMessages();
       setMessages((prev) => prev.filter((msg) => msg.id !== messageId));
       message.success("ההודעה הועברה לארכיון בהצלחה");
     } catch (error) {
       message.error("שגיאה בהעברת ההודעה לארכיון");
     }
-    fetchMessages();
   };
 
   const renderMessageDetails = () => (
@@ -68,27 +65,39 @@ const Index = () => {
       open={!!selectedMessage}
       onCancel={() => setSelectedMessage(null)}
       footer={null}
+      width={600}
+      style={{ textAlign: "right" }}
     >
-      <p>
-        <strong>נשלח על ידי:</strong>{" "}
-        {`${selectedMessage.first_name} ${selectedMessage.last_name}`}
-      </p>
-      <p>{selectedMessage.text}</p>
+      <div>
+        <p>{selectedMessage.text}</p>
+        <p>
+          <strong>נשלח על ידי:</strong>{" "}
+          {`${selectedMessage.first_name} ${selectedMessage.last_name}`}
+        </p>
+      </div>
     </Modal>
   );
 
   return (
-    <div style={{ padding: 16 }}>
-      <Title level={3}>תיבת הודעות</Title>
+    <div className="messages-container">
+      <Title level={3} className="title">
+        תיבת הודעות
+      </Title>
       <List
+        style={{}}
         bordered
         loading={loading}
         dataSource={messages}
         locale={{ emptyText: "אין נתונים להצגה" }}
         renderItem={(message) => (
           <List.Item
+            className={`message-item ${
+              message.read_boolean ? "read" : "unread"
+            }`}
             style={{
-              backgroundColor: message.read_boolean ? "#fff" : "#f0f2f5",
+              paddingInlineStart: "15px",
+              paddingInlineEnd: "4px",
+              backgroundColor: message.read_boolean ? "#fff" : "#dadee3",
               cursor: "pointer",
             }}
             onClick={() => {
@@ -98,21 +107,49 @@ const Index = () => {
             actions={[
               <Button
                 type="link"
+                icon={<InboxOutlined />}
                 onClick={(e) => {
                   e.stopPropagation();
                   handleArchive(message.message_id);
                 }}
               >
-                העבר לארכיון
+                ארכיון
               </Button>,
             ]}
           >
             <List.Item.Meta
-              title={message.subject}
-              description={`${message.first_name} ${
-                message.last_name
-              } - ${new Date(message.timestamp).toLocaleString()}`}
+              avatar={
+                <UserOutlined
+                  className="profile-icon"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 50,
+                    height: 50,
+                    borderRadius: "50%",
+                    background: "#f0f0f0",
+                    fontSize: 24,
+                    color: "#aaa",
+                  }}
+                />
+              }
+              title={<span className="message-subject">{message.subject}</span>}
+              description={
+                <div className="message-meta">
+                  <span className="message-sender">
+                    {`${message.first_name} ${message.last_name}`}
+                  </span>
+                  <br />
+                  <span className="message-time">
+                    {new Date(message.timestamp).toLocaleString()}
+                  </span>
+                </div>
+              }
             />
+            {!message.read_boolean && (
+              <EyeOutlined className="unread-indicator" />
+            )}
           </List.Item>
         )}
       />
