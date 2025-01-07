@@ -3,35 +3,24 @@ import { Form, Input, Button, message, Card, Switch, Result } from "antd";
 import axios from "axios";
 import API_URL from "../../config";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../contexts/UserContext";
 
 const EditMember = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null);
   const [changePassword, setChangePassword] = useState(false);
   const [isSuccess, setIsSuccess] = useState(null);
+  const { user, setUser } = useUser();
+
   const navigate = useNavigate();
 
   const token = JSON.parse(localStorage.getItem("token"));
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/users`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUser(response.data.user);
-        console.log(response.data.user);
-
-        form.setFieldsValue(response.data.user);
-      } catch (error) {
-        message.error("שגיאה בשליפת פרטי המשתמש.");
-      }
-    };
-
-    fetchUser();
-  }, [token, form]);
-
+    if (user) {
+      form.setFieldsValue(user);
+    }
+  }, [user, form]);
   const handleSubmit = async (values) => {
     setLoading(true);
     try {
@@ -61,6 +50,7 @@ const EditMember = () => {
 
       if (response.status === 200) {
         setIsSuccess(true);
+        setUser({ ...user, ...userDetails });
       } else {
         setIsSuccess(false);
       }

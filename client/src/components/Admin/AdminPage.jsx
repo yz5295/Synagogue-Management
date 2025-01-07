@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Menu, Button, Drawer, Typography } from "antd";
+import { Layout, Menu, Button, Drawer } from "antd";
 import {
   ClockCircleOutlined,
   BulbOutlined,
@@ -14,10 +14,9 @@ import {
   MenuOutlined,
 } from "@ant-design/icons";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import API_URL from "../../config";
+import { useUser } from "../../contexts/UserContext";
 
 const { Header, Sider, Content } = Layout;
-const { Text } = Typography;
 
 function AdminPage() {
   const navigate = useNavigate();
@@ -26,37 +25,17 @@ function AdminPage() {
   const [collapsed, setCollapsed] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { settings, loading } = useUser();
 
   useEffect(() => {
-    const updateSynagogueName = () => {
-      const settings = JSON.parse(localStorage.getItem("settings"));
-      if (settings?.synagogueName) {
-        setSynagogueName(`בית הכנסת ${settings.synagogueName}`);
-        document.title = `בית הכנסת ${settings.synagogueName}`;
-      }
-    };
+    if (loading || !settings) {
+      return;
+    }
+    setSynagogueName(`בית הכנסת ${settings.synagogueName}`);
+    document.title = `בית הכנסת ${settings.synagogueName}`;
+  }, [settings, loading]);
 
-    fetch(`${API_URL}/settings`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch settings");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        localStorage.setItem("settings", JSON.stringify(data));
-        window.dispatchEvent(new Event("settingsUpdated"));
-      })
-      .catch((error) => {
-        console.error("שגיאה בטעינת הגדרות");
-      });
-
-    const handleSettingsUpdate = () => {
-      updateSynagogueName();
-    };
-
-    window.addEventListener("settingsUpdated", handleSettingsUpdate);
-
+  useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 992);
     };
@@ -66,7 +45,6 @@ function AdminPage() {
     window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener("settingsUpdated", handleSettingsUpdate);
       window.removeEventListener("resize", handleResize);
     };
   }, []);

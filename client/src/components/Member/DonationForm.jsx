@@ -1,4 +1,3 @@
-// src/DonationForm.js
 import React, { useEffect, useState } from "react";
 import { Form, Input, Select, Button, message, Result, Card } from "antd";
 import axios from "axios";
@@ -7,13 +6,13 @@ import "dayjs/locale/he";
 import CreditCard from "../payment/CreditCard";
 import SendEmail from "./SendEmail";
 import API_URL from "../../config";
+import { useUser } from "../../contexts/UserContext";
 const { Option } = Select;
 
 const DonationForm = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState("");
-  const [user, setUser] = useState("");
   const [showResult, setShowResult] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [paymentIntent, setPaymentIntent] = useState(null);
@@ -21,46 +20,17 @@ const DonationForm = () => {
   const [donationData, setDonationData] = useState({});
   const [customerDetails, setCustomerDetails] = useState({});
   const [sendEmail, setSendEmail] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
-  const [settings, setSettings] = useState({});
+  const { user, settings } = useUser();
   const date = new Date().toISOString();
 
   useEffect(() => {
-    const fetchUserDetails = async () => {
-      const settingsResponse = await fetch(`${API_URL}/settings`);
-      const settingsData = await settingsResponse.json();
-      setSettings(settingsData);
-
-      const token = JSON.parse(localStorage.getItem("token"));
-
-      if (!token) {
-        throw new Error("שגיאה: פרטי משתמש חסרים. התחבר מחדש ונסה שוב.");
-      }
-
-      try {
-        const userResponse = await axios.get(`${API_URL}/users`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (userResponse.status !== 200) {
-          throw new Error("שגיאה בשליפת פרטי המשתמש");
-        }
-
-        setUser(userResponse.data.user);
-        setUserEmail(userResponse.data.user.email);
-        const fullName = `${userResponse.data.user.first_name} ${userResponse.data.user.last_name}`;
-
-        setCustomerDetails({
-          name: fullName,
-          email: userResponse.data.user.email,
-          phone: userResponse.data.user.phone,
-          description: "תרומה",
-        });
-      } catch (error) {
-        console.error("שגיאה בשליפת פרטי המשתמש:");
-      }
-    };
-    fetchUserDetails();
+    const fullName = `${user.first_name} ${user.last_name}`;
+    setCustomerDetails({
+      name: fullName,
+      email: user.email,
+      phone: user.phone,
+      description: "תרומה",
+    });
   }, []);
 
   const onFinishDonation = (values) => {
@@ -112,19 +82,39 @@ const DonationForm = () => {
   };
 
   const emailSummary = `
-  <div style="max-width: 500px; margin: 20px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; font-family: Arial, sans-serif; direction: rtl; text-align: right;">
-    <h3 style="margin-top: 0; color: #333;">סיכום תרומה לבית הכנסת</h3>
-    <p><strong> בית הכנסת ${settings.synagogueName}</strong></p>
-    <p>תרומה מאת: ${user.first_name} ${user.last_name}</p>
-    <p>מטרת התרומה: ${donationData.purpose}</p>
-     <p>בתאריך: ${dayjs(date).format("DD-MM-YYYY")}</p>
-    <p>טלפון: ${user.phone} | דוא"ל: ${user.email}</p>
-    <hr style="margin: 15px 0; border: none; border-top: 1px solid #ccc;" />
-    <h3 style="margin: 5px 0; color: #000;">סה"כ לתשלום: ${
-      donationData.amount
-    } ₪</h3>
+  <div style="max-width: 600px; margin: 20px auto; padding: 25px; border-radius: 10px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; direction: rtl; text-align: right; background-color: #f9f9f9; border: 1px solid #ddd;">
+    <header style="border-bottom: 1px solid #ccc; padding-bottom: 10px; margin-bottom: 15px;">
+      <h1 style="margin: 0; font-size: 20px; color: #333;">סיכום תרומה לבית הכנסת</h1>
+      <p style="margin: 5px 0; color: #777; font-size: 13px;">${dayjs(
+        date
+      ).format("DD-MM-YYYY")}</p>
+    </header>
+    <section style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+      <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>בית הכנסת:</strong> ${
+        settings.synagogueName
+      }</p>
+      <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>שם התורם:</strong> ${
+        user.first_name
+      } ${user.last_name}</p>
+      <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>מטרת התרומה:</strong> ${
+        donationData.purpose
+      }</p>
+      <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>פרטי התקשרות:</strong> ${
+        user.phone
+      } | ${user.email}</p>
+    </section>
+    <section style="margin-top: 15px; background-color: #f7f7f7; padding: 15px; border-radius: 8px; border: 1px solid #ddd; text-align: center;">
+      <h2 style="margin: 0; font-size: 18px; color: #222;">סה"כ לתשלום</h2>
+      <p style="margin: 10px 0 0; font-size: 16px; color: #555; font-weight: bold;">${
+        donationData.amount
+      } ₪</p>
+    </section>
+    <footer style="margin-top: 20px; text-align: center; font-size: 11px; color: #888;">
+      <p style="margin: 0;">תודה רבה על תרומתך לבית הכנסת.</p>
+      <p style="margin: 0;">בברכה, הנהלת בית הכנסת ${settings.synagogueName}</p>
+    </footer>
   </div>
-  `;
+`;
 
   return (
     <Card
@@ -220,7 +210,7 @@ const DonationForm = () => {
               </Button> */}
               {sendEmail && (
                 <SendEmail
-                  to={userEmail}
+                  to={user.email}
                   subject={`סיכום תרומה בית הכנסת ${settings.synagogueName}`}
                   text={emailSummary}
                   onComplete={(success) => {

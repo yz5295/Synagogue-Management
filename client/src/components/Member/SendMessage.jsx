@@ -3,6 +3,7 @@ import { Form, Input, Button, Typography, Card, Result } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../contexts/UserContext";
 import API_URL from "../../config";
 
 const { Title } = Typography;
@@ -14,42 +15,30 @@ const SendMessage = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
+  const { user } = useUser();
 
   const navigate = useNavigate();
   const [form] = Form.useForm();
 
-  const token = JSON.parse(localStorage.getItem("token"));
-  const fetchUser = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/users`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUserEmail(response.data.user.email);
-      return response.data.user.id;
-    } catch (error) {
-      message.error("שגיאה בשליפת פרטי המשתמש.");
-    }
-  };
-
   const handleSubmit = async () => {
-    const userId = await fetchUser();
     const messageData = {
       subject,
       text: message,
       timestamp: new Date().toISOString(),
       read: false,
-      user_id: userId,
+      user_id: user.id,
     };
 
     try {
-      const response = await fetch(`${API_URL}/messages/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(messageData),
-      });
+      const response = await axios.post(
+        `${API_URL}/messages/sendMessage`,
+        messageData,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
-      if (response.ok) {
+      if (response.status === 200) {
         setModalMessage("ההודעה נשלחה בהצלחה!");
         setIsSuccess(true);
         setMessage("");

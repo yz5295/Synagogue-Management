@@ -5,28 +5,30 @@ import LoginMenu from "../Login/LoginMenu";
 import PrayerTimes from "./PrayerTimes";
 import Messages from "./Messages";
 import Congratulations from "./Congratulations";
-import axios from "axios";
 import "../../style/HomePage.css";
-import API_URL from "../../config";
+import { useUser } from "../../contexts/UserContext";
 
 function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { settings, loading } = useUser();
 
   const [showDayTimes, setShowDayTimes] = useState(false);
 
   useEffect(() => {
-    const fetchDonations = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/Settings`);
-        const data = response.data;
-        document.title = `בית הכנסת ${data.synagogueName}`;
-      } catch (error) {
-        console.error("Error fetching settings:", error);
-      }
-    };
-    fetchDonations();
+    // console.log("loading:", loading);
+    // console.log("settings:", settings);
 
+    // document.title = "בית הכנסת";
+    if (loading || !settings) {
+      return;
+    }
+    // console.log("loading:", loading);
+    // console.log("settings:", settings);
+    document.title = `בית הכנסת ${settings.synagogueName}`;
+  }, [loading, settings]);
+
+  useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };

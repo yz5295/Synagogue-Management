@@ -11,11 +11,14 @@ export default function CheckoutForm({ dpmCheckerLink, onComplete }) {
 
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isPaymentElementComplete, setIsPaymentElementComplete] =
+    useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!stripe || !elements) {
+    if (!stripe || !elements || !isPaymentElementComplete) {
+      setMessage("אנא ודא שפרטי התשלום הוזנו בצורה מלאה.");
       return;
     }
 
@@ -55,6 +58,10 @@ export default function CheckoutForm({ dpmCheckerLink, onComplete }) {
     setIsLoading(false);
   };
 
+  const handlePaymentElementChange = (event) => {
+    setIsPaymentElementComplete(event.complete);
+  };
+
   const paymentElementOptions = {
     layout: "accordion",
   };
@@ -62,9 +69,18 @@ export default function CheckoutForm({ dpmCheckerLink, onComplete }) {
   return (
     <>
       <form id="payment-form" onSubmit={handleSubmit}>
-        <PaymentElement id="payment-element" options={paymentElementOptions} />
+        <PaymentElement
+          id="payment-element"
+          options={paymentElementOptions}
+          onChange={handlePaymentElementChange}
+        />
 
-        <button disabled={isLoading || !stripe || !elements} id="submit">
+        <button
+          disabled={
+            isLoading || !stripe || !elements || !isPaymentElementComplete
+          }
+          id="submit"
+        >
           <span id="button-text">
             {isLoading ? (
               <div className="spinner" id="spinner"></div>

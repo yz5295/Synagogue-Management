@@ -90,9 +90,7 @@ function LoginMenu({ menuOpen, toggleMenu }) {
   };
 
   const handleOpenRegisterModal = () => {
-    console.log("API URL:", process.env.REACT_APP_API_URL);
-    console.log("API URL 2:", API_URL);
-    console.log("ENV VARIABLES:", process.env);
+    console.log("API URL:", API_URL);
 
     setIsRegisterModalOpen(true);
     setRegisterForm({
@@ -279,7 +277,7 @@ function LoginMenu({ menuOpen, toggleMenu }) {
       if (
         error.response &&
         error.response.data &&
-        error.response.data.message === "המייל כבר קיים במערכת"
+        error.response.data.error === "המייל כבר קיים במערכת"
       ) {
         setRegisterError("כתובת המייל כבר קיימת במערכת.");
       } else {

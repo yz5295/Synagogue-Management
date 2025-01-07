@@ -1,27 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useUser } from "../../contexts/UserContext";
 import API_URL from "../../config";
 
 const ForgotPassword = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
-  const [synagogueName, setSynagogueName] = useState(null);
+  const { settings } = useUser();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const settingsResponse = await fetch(`${API_URL}/settings`);
-        const settingsData = await settingsResponse.json();
-        setSynagogueName(settingsData.synagogueName);
-      } catch (error) {
-        console.error("שגיאה בשליפת נתונים:", error);
-        message.error("שגיאה בשליפת נתונים.");
-      }
-    };
-
-    fetchData();
-  }, []);
+  const synagogueName = settings.synagogueName;
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -31,17 +19,12 @@ const ForgotPassword = ({ onClose }) => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${API_URL}/forgot-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, synagogueName }),
+      const response = await axios.post(`${API_URL}/forgot-password`, {
+        email,
+        synagogueName,
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
+      if (response.status === 200) {
         setMessageType("success");
         setMessage("המייל לאיפוס נשלח בהצלחה!");
         setTimeout(() => {
@@ -49,11 +32,15 @@ const ForgotPassword = ({ onClose }) => {
         }, 3000);
       } else {
         setMessageType("error");
-        setMessage(data.error || "שגיאה בהגשת הבקשה");
+        setMessage(response.data.error || "שגיאה בהגשת הבקשה");
       }
     } catch (error) {
       setMessageType("error");
-      setMessage("שגיאה בשליחת הבקשה. נסה שנית.");
+      if (error.response && error.response.data && error.response.data.error) {
+        setMessage(error.response.data.error);
+      } else {
+        setMessage("שגיאה בשליחת הבקשה. נסה שנית.");
+      }
     }
   };
 

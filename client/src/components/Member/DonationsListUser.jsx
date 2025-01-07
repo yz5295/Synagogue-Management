@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Table, Select, Typography } from "antd";
+import { Table, Select, Typography, message } from "antd";
 import dayjs from "dayjs";
 import "dayjs/locale/he";
 import axios from "axios";
 import API_URL from "../../config";
+import { useUser } from "../../contexts/UserContext";
 
 dayjs.locale("he");
 
@@ -16,6 +17,7 @@ const DonationsListUser = () => {
   const [selectedMonth, setSelectedMonth] = useState(dayjs().month() + 1);
   const [selectedYear, setSelectedYear] = useState(dayjs().year());
   const [loading, setLoading] = useState(true);
+  const { user, setUser } = useUser();
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -31,32 +33,10 @@ const DonationsListUser = () => {
 
     const fetchDonations = async () => {
       try {
-        const token = JSON.parse(localStorage.getItem("token"));
-        if (!token) {
-          throw new Error("שגיאה: פרטי משתמש חסרים. התחבר מחדש ונסה שוב.");
-        }
-
-        const userResponse = await axios.get(`${API_URL}/users`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (userResponse.status !== 200) {
-          throw new Error("שגיאה בשליפת פרטי המשתמש");
-        }
-
-        const userId = userResponse.data.user.id;
-
-        const donationResponse = await fetch(`${API_URL}/donation`);
-        if (!donationResponse.ok) {
-          throw new Error(
-            `בקשה נכשלה בשל תקלה בשרת סטטוס: ${donationResponse.status}`
-          );
-        }
-
-        const donations = await donationResponse.json();
+        const { data: donations } = await axios.get(`${API_URL}/donation`);
 
         const userDonations = donations.filter(
-          (donation) => donation.user_id === userId
+          (donation) => donation.user_id === user.id
         );
 
         setDonations(userDonations);
@@ -67,7 +47,8 @@ const DonationsListUser = () => {
           yearParam || selectedYear
         );
       } catch (error) {
-        console.error("שגיאה בטעינת התרומות:");
+        console.error("שגיאה בטעינת התרומות:", error);
+        message.error("שגיאה בטעינת התרומות.");
       } finally {
         setLoading(false);
       }

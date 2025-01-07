@@ -613,15 +613,32 @@ const FinanceManager = () => {
               label="תאריך"
               rules={[{ required: true, message: "בחר תאריך" }]}
             >
-              <DatePicker format="DD/MM/YYYY" style={{ width: "100%" }} />
+              <DatePicker
+                format="DD/MM/YYYY"
+                style={{ width: "100%" }}
+                placeholder="בחר תאריך"
+              />
             </Form.Item>
             <Form.Item
               name="amount"
               label="סכום"
-              rules={[{ required: true, message: "הכנס סכום" }]}
+              rules={[
+                { required: true, message: "הכנס סכום" },
+                {
+                  validator: (_, value) => {
+                    if (value > 0) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error("הסכום חייב להיות מספר חיובי")
+                    );
+                  },
+                },
+              ]}
             >
               <Input type="number" />
             </Form.Item>
+
             <Form.Item>
               <Button
                 type="primary"

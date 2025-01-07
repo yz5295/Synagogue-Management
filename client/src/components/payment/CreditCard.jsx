@@ -4,6 +4,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "./CheckoutForm";
 import CompletePage from "./CompletePage";
 import API_URL from "../../config";
+import { Spin } from "antd";
 
 import "../../style/payment.css";
 
@@ -85,16 +86,26 @@ export default function CreditCard({
           )}
         </Elements>
       ) : (
-        <p
+        <div
           style={{
-            textAlign: "center",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
             direction: "rtl",
-            fontSize: "16px",
             marginTop: "15px",
           }}
         >
-          טוען אמצעי תשלום...
-        </p>
+          <Spin size="large" style={{ marginBottom: "10px" }} />
+          <p
+            style={{
+              textAlign: "center",
+              fontSize: "16px",
+            }}
+          >
+            טוען אמצעי תשלום...
+          </p>
+        </div>
       )}
     </div>
   );

@@ -10,9 +10,8 @@ import {
   EditOutlined,
 } from "@ant-design/icons";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
 import "../../style/MemberPage.css";
-import API_URL from "../../config";
+import { useUser } from "../../contexts/UserContext";
 
 const { Header, Sider, Content } = Layout;
 
@@ -22,27 +21,14 @@ function MemberPage() {
   const [fullName, setFullName] = useState("");
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [user, setUser] = useState(null);
+  const { user } = useUser();
 
   useEffect(() => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/users`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUser(response.data.user);
-      } catch (error) {
-        console.error("שגיאה בשליפת פרטי משתמש:", error);
-      }
-    };
-
     const handleResize = () => {
       setIsMobile(window.innerWidth < 992);
     };
 
     handleResize();
-    fetchUser();
     window.addEventListener("resize", handleResize);
 
     return () => {

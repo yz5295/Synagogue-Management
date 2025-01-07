@@ -11,29 +11,34 @@ import {
 } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../contexts/UserContext";
 import API_URL from "../../config";
 
 const Settings = () => {
   const [form] = Form.useForm();
   const [isSaved, setIsSaved] = useState(false);
-  const savedSettings = JSON.parse(localStorage.getItem("settings")) || {};
+  const { settings, setSettings, loading } = useUser();
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    form.setFieldsValue(savedSettings);
-  }, [form]);
+    if (loading || !settings) {
+      return;
+    }
+    const { administratorPassword, confirmPassword, ...filteredSettings } =
+      settings;
+    form.setFieldsValue(filteredSettings);
+  }, [loading, settings]);
 
   const onFinish = async (values) => {
     try {
       await axios.post(`${API_URL}/settings`, values);
       setIsSaved(true);
+      setSettings(values);
     } catch (error) {
       setIsSaved(false);
       message.error("שגיאה בשמירת ההגדרות");
     }
-
-    window.dispatchEvent(new Event("settingsUpdated"));
   };
 
   const resetForm = () => {
