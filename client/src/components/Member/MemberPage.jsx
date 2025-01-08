@@ -45,7 +45,7 @@ function MemberPage() {
 
   const menuItems = [
     {
-      key: "donate",
+      key: "donation-form",
       label: "תרומה לבית כנסת",
       icon: <DollarOutlined />,
       onClick: () => {
