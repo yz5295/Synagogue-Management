@@ -33,10 +33,6 @@ app.use("/sendmail", sendmail);
 app.use("/payment", payment);
 app.use("/forgot-password", forgotpassword);
 
-const initializeDatabase = require("./initializeDB");
-
-initializeDatabase();
-
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
