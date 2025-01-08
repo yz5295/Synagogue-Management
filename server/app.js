@@ -33,7 +33,7 @@ app.use("/sendmail", sendmail);
 app.use("/payment", payment);
 app.use("/forgot-password", forgotpassword);
 
-const initializeDatabase = require("./initializeDatabase");
+const initializeDatabase = require("./initializeDB");
 
 // קריאה לאתחול מסד הנתונים
 initializeDatabase();
