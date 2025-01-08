@@ -11,7 +11,29 @@ export const UserProvider = ({ children }) => {
   const [token, setToken] = useState(null);
 
   useEffect(() => {
+    const storedToken = JSON.parse(localStorage.getItem("token"));
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const updatedToken = JSON.parse(localStorage.getItem("token"));
+      setToken(updatedToken);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
+  useEffect(() => {
     const fetchData = async () => {
+      if (!token) return;
+
       try {
         const userResponse = await axios.get(`${API_URL}/users`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -28,14 +50,12 @@ export const UserProvider = ({ children }) => {
       }
     };
 
-    if (token) {
-      fetchData();
-    }
+    fetchData();
   }, [token]);
 
   return (
     <UserContext.Provider
-      value={{ user, setUser, token, setToken, settings, setSettings, loading }}
+      value={{ user, setUser, settings, setSettings, loading }}
     >
       {children}
     </UserContext.Provider>

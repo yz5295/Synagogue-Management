@@ -10,16 +10,18 @@ const EditMember = () => {
   const [loading, setLoading] = useState(true);
   const [changePassword, setChangePassword] = useState(false);
   const [isSuccess, setIsSuccess] = useState(null);
-  const { user, setUser, token } = useUser();
+  const { user, setUser } = useUser();
 
   const navigate = useNavigate();
+
+  const token = JSON.parse(localStorage.getItem("token"));
 
   useEffect(() => {
     if (user) {
       form.setFieldsValue(user);
       setLoading(false);
     }
-  }, [user, token, form]);
+  }, [user, form]);
   const handleSubmit = async (values) => {
     setLoading(true);
     try {

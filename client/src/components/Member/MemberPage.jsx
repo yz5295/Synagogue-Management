@@ -22,7 +22,7 @@ function MemberPage() {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [currentMenuKey, setCurrentMenuKey] = useState(null);
-  const { user, setToken, loading } = useUser();
+  const { user, loading } = useUser();
 
   useEffect(() => {
     const handleResize = () => {
@@ -131,7 +131,7 @@ function MemberPage() {
               key="logout"
               icon={<LogoutOutlined style={{ color: "#ff4d4f" }} />}
               onClick={() => {
-                setToken(null);
+                localStorage.removeItem("token");
                 navigate("/");
               }}
               style={{
@@ -260,7 +260,7 @@ function MemberPage() {
             key="logout"
             icon={<LogoutOutlined style={{ color: "#ff4d4f" }} />}
             onClick={() => {
-              setToken(null);
+              localStorage.removeItem("token");
               navigate("/");
               setDrawerVisible(false);
             }}
