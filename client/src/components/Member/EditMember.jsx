@@ -7,7 +7,7 @@ import { useUser } from "../../contexts/UserContext";
 
 const EditMember = () => {
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [changePassword, setChangePassword] = useState(false);
   const [isSuccess, setIsSuccess] = useState(null);
   const { user, setUser } = useUser();
@@ -19,6 +19,7 @@ const EditMember = () => {
   useEffect(() => {
     if (user) {
       form.setFieldsValue(user);
+      setLoading(false);
     }
   }, [user, form]);
   const handleSubmit = async (values) => {
@@ -71,9 +72,9 @@ const EditMember = () => {
     navigate("/member");
   };
 
-  if (!user) {
-    return <p>טוען נתונים...</p>;
-  }
+  // if (!user) {
+  //   return <p>טוען נתונים...</p>;
+  // }
 
   if (isSuccess !== null) {
     return (
@@ -94,6 +95,7 @@ const EditMember = () => {
   return (
     <Card
       title="עריכת פרטי משתמש"
+      loading={loading}
       style={{
         boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
         maxWidth: "600px",

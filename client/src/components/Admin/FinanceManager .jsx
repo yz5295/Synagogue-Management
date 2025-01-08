@@ -282,11 +282,15 @@ const FinanceManager = () => {
     const incomeWorksheet = XLSX.utils.json_to_sheet(incomeData);
     const expenseWorksheet = XLSX.utils.json_to_sheet(expenseData);
     const workbook = XLSX.utils.book_new();
-
     XLSX.utils.book_append_sheet(workbook, combinedWorksheet, "הכנסות והוצאות");
     XLSX.utils.book_append_sheet(workbook, incomeWorksheet, "הכנסות");
     XLSX.utils.book_append_sheet(workbook, expenseWorksheet, "הוצאות");
-    XLSX.writeFile(workbook, "הכנסות והוצאות.xlsx");
+    XLSX.writeFile(
+      workbook,
+      `הכנסות והוצאות ${startDate.format("DD-MM-YYYY")}-${endDate.format(
+        "DD-MM-YYYY"
+      )}.xlsx`
+    );
   };
 
   const columns = [

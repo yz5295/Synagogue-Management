@@ -13,6 +13,7 @@ import {
   Alert,
   Tooltip,
   Switch,
+  Spin,
 } from "antd";
 import dayjs from "dayjs";
 import "dayjs/locale/he";
@@ -46,7 +47,6 @@ const EventBooking = () => {
   const [bookedDates, setBookedDates] = useState([]);
   const [bookedareDates, setBookedareDates] = useState([]);
   const [dataLoaded, setDataLoaded] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
   const [customerDetails, setCustomerDetails] = useState({});
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [sendEmail, setSendEmail] = useState(false);
@@ -335,12 +335,29 @@ const EventBooking = () => {
   };
 
   if (!settings || !dataLoaded) {
-    return <div>טוען...</div>;
+    return (
+      <div style={{ textAlign: "center", marginTop: "20px" }}>
+        <Spin
+          size="large"
+          style={{ marginBottom: "10px" }}
+          tip="טוען נתונים..."
+        />
+        <p
+          style={{
+            textAlign: "center",
+            fontSize: "16px",
+          }}
+        >
+          טוען נתונים...
+        </p>
+      </div>
+    );
   }
 
   const steps = [
     {
       title: "פרטי אירוע",
+
       content: (
         <Form form={form} layout="vertical" style={{ maxWidth: 400 }}>
           <Form.Item

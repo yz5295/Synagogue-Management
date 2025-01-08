@@ -25,6 +25,8 @@ function AdminPage() {
   const [collapsed, setCollapsed] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [currentMenuKey, setCurrentMenuKey] = useState(null);
+
   const { settings, loading } = useUser();
 
   useEffect(() => {
@@ -56,6 +58,7 @@ function AdminPage() {
       icon: <ClockCircleOutlined />,
       onClick: () => {
         navigate("prayer-times");
+        setCurrentMenuKey("prayer-times");
         if (isMobile) setDrawerVisible(false);
       },
     },
@@ -65,6 +68,7 @@ function AdminPage() {
       icon: <MessageOutlined />,
       onClick: () => {
         navigate("add-messages");
+        setCurrentMenuKey("add-messages");
         if (isMobile) setDrawerVisible(false);
       },
     },
@@ -74,6 +78,7 @@ function AdminPage() {
       icon: <SmileOutlined />,
       onClick: () => {
         navigate("add-congratulations");
+        setCurrentMenuKey("add-congratulations");
         if (isMobile) setDrawerVisible(false);
       },
     },
@@ -83,6 +88,7 @@ function AdminPage() {
       icon: <UserOutlined />,
       onClick: () => {
         navigate("member-list");
+        setCurrentMenuKey("member-list");
         if (isMobile) setDrawerVisible(false);
       },
     },
@@ -92,6 +98,7 @@ function AdminPage() {
       icon: <DollarOutlined />,
       onClick: () => {
         navigate("donation-list");
+        setCurrentMenuKey("donation-list");
         if (isMobile) setDrawerVisible(false);
       },
     },
@@ -101,6 +108,7 @@ function AdminPage() {
       icon: <CalendarOutlined />,
       onClick: () => {
         navigate("event-list");
+        setCurrentMenuKey("event-list");
         if (isMobile) setDrawerVisible(false);
       },
     },
@@ -110,6 +118,7 @@ function AdminPage() {
       icon: <BulbOutlined />,
       onClick: () => {
         navigate("finance-manager");
+        setCurrentMenuKey("finance-manager");
         if (isMobile) setDrawerVisible(false);
       },
     },
@@ -119,6 +128,7 @@ function AdminPage() {
       icon: <InboxOutlined />,
       onClick: () => {
         navigate("inbox");
+        setCurrentMenuKey("inbox");
         if (isMobile) setDrawerVisible(false);
       },
     },
@@ -128,6 +138,7 @@ function AdminPage() {
       icon: <SettingOutlined />,
       onClick: () => {
         navigate("settings");
+        setCurrentMenuKey("settings");
         if (isMobile) setDrawerVisible(false);
       },
     },
@@ -157,6 +168,7 @@ function AdminPage() {
             theme="dark"
             mode="inline"
             style={{ height: "100%", paddingTop: "20%" }}
+            selectedKeys={isBasePath() ? [] : [currentMenuKey]}
           >
             {menuItems.map((item) => (
               <Menu.Item key={item.key} icon={item.icon} onClick={item.onClick}>
@@ -165,19 +177,30 @@ function AdminPage() {
             ))}
             <Menu.Item
               key="logout"
-              icon={<LogoutOutlined style={{ color: "red" }} />}
+              icon={<LogoutOutlined style={{ color: "#ff4d4f" }} />}
               onClick={() => {
-                localStorage.removeItem("settings");
                 navigate("/");
+                setDrawerVisible(false);
               }}
               style={{
                 position: "fixed",
-                bottom: 0,
+                bottom: "10px",
+                right: "5px",
                 width: "auto",
                 zIndex: 1000,
+                padding: "15px",
+                cursor: "pointer",
               }}
             >
-              <span style={{ color: "red" }}>יציאה</span>
+              <span
+                style={{
+                  fontWeight: "600",
+                  color: "#ff4d4f",
+                  letterSpacing: "1px",
+                }}
+              >
+                יציאה
+              </span>
             </Menu.Item>
           </Menu>
         </Sider>
@@ -265,7 +288,12 @@ function AdminPage() {
           </span>
         }
       >
-        <Menu theme="dark" mode="inline" style={{ height: "100%" }}>
+        <Menu
+          theme="dark"
+          mode="inline"
+          style={{ height: "100%" }}
+          selectedKeys={isBasePath() ? [] : [currentMenuKey]}
+        >
           {menuItems.map((item) => (
             <Menu.Item key={item.key} icon={item.icon} onClick={item.onClick}>
               {item.label}
@@ -273,20 +301,30 @@ function AdminPage() {
           ))}
           <Menu.Item
             key="logout"
-            icon={<LogoutOutlined style={{ color: "red" }} />}
+            icon={<LogoutOutlined style={{ color: "#ff4d4f" }} />}
             onClick={() => {
-              localStorage.removeItem("settings");
               navigate("/");
               setDrawerVisible(false);
             }}
             style={{
               position: "fixed",
-              bottom: 0,
-              width: "100%",
+              bottom: "10px",
+              right: "5px",
+              width: "auto",
               zIndex: 1000,
+              padding: "15px",
+              cursor: "pointer",
             }}
           >
-            <span style={{ color: "red" }}>יציאה</span>
+            <span
+              style={{
+                fontWeight: "600",
+                color: "#ff4d4f",
+                letterSpacing: "1px",
+              }}
+            >
+              יציאה
+            </span>
           </Menu.Item>
         </Menu>
       </Drawer>

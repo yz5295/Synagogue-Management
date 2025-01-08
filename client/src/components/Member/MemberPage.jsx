@@ -21,6 +21,7 @@ function MemberPage() {
   const [fullName, setFullName] = useState("");
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [currentMenuKey, setCurrentMenuKey] = useState(null);
   const { user } = useUser();
 
   useEffect(() => {
@@ -49,6 +50,7 @@ function MemberPage() {
       icon: <DollarOutlined />,
       onClick: () => {
         navigate("donation-form");
+        setCurrentMenuKey("donation-form");
         if (isMobile) setDrawerVisible(false);
       },
     },
@@ -58,33 +60,37 @@ function MemberPage() {
       icon: <GiftOutlined />,
       onClick: () => {
         navigate("donations-list-user");
+        setCurrentMenuKey("donations-list-user");
         if (isMobile) setDrawerVisible(false);
       },
     },
     {
-      key: "hallBooking",
+      key: "event-booking",
       label: "הזמנת אולם האירועים",
       icon: <AppstoreOutlined />,
       onClick: () => {
         navigate("event-booking");
+        setCurrentMenuKey("event-booking");
         if (isMobile) setDrawerVisible(false);
       },
     },
     {
-      key: "sendMessage",
+      key: "send-message",
       label: "שליחת הודעות לגבאי",
       icon: <InboxOutlined />,
       onClick: () => {
         navigate("send-message");
+        setCurrentMenuKey("send-message");
         if (isMobile) setDrawerVisible(false);
       },
     },
     {
-      key: "editMember",
+      key: "edit-member",
       label: "שינוי פרטים",
       icon: <EditOutlined />,
       onClick: () => {
         navigate("edit-member");
+        setCurrentMenuKey("edit-member");
         if (isMobile) setDrawerVisible(false);
       },
     },
@@ -92,6 +98,10 @@ function MemberPage() {
 
   const toggleDrawer = () => {
     setDrawerVisible(!drawerVisible);
+  };
+
+  const isBasePath = () => {
+    return location.pathname === "/member" || location.pathname === "/member/";
   };
 
   return (
@@ -108,6 +118,7 @@ function MemberPage() {
             theme="dark"
             mode="inline"
             style={{ height: "100%", paddingTop: "20%" }}
+            selectedKeys={isBasePath() ? [] : [currentMenuKey]}
           >
             {menuItems.map((item) => (
               <Menu.Item key={item.key} icon={item.icon} onClick={item.onClick}>
@@ -116,19 +127,30 @@ function MemberPage() {
             ))}
             <Menu.Item
               key="logout"
-              icon={<LogoutOutlined style={{ color: "red" }} />}
+              icon={<LogoutOutlined style={{ color: "#ff4d4f" }} />}
               onClick={() => {
                 localStorage.removeItem("token");
                 navigate("/");
               }}
               style={{
                 position: "fixed",
-                bottom: 0,
+                bottom: "10px",
+                right: "5px",
                 width: "auto",
                 zIndex: 1000,
+                padding: "15px",
+                cursor: "pointer",
               }}
             >
-              <span style={{ color: "red" }}>יציאה</span>
+              <span
+                style={{
+                  fontWeight: "600",
+                  color: "#ff4d4f",
+                  letterSpacing: "1px",
+                }}
+              >
+                יציאה
+              </span>
             </Menu.Item>
           </Menu>
         </Sider>
@@ -186,8 +208,7 @@ function MemberPage() {
             textAlign: "right",
           }}
         >
-          {location.pathname === "/member" ||
-          location.pathname === "/member/" ? (
+          {isBasePath() ? (
             <div
               style={{
                 fontSize: "18px",
@@ -222,7 +243,12 @@ function MemberPage() {
           </span>
         }
       >
-        <Menu theme="dark" mode="inline" style={{ height: "100%" }}>
+        <Menu
+          theme="dark"
+          mode="inline"
+          style={{ height: "100%" }}
+          selectedKeys={isBasePath() ? [] : [currentMenuKey]}
+        >
           {menuItems.map((item) => (
             <Menu.Item key={item.key} icon={item.icon} onClick={item.onClick}>
               {item.label}
@@ -230,7 +256,7 @@ function MemberPage() {
           ))}
           <Menu.Item
             key="logout"
-            icon={<LogoutOutlined style={{ color: "red" }} />}
+            icon={<LogoutOutlined style={{ color: "#ff4d4f" }} />}
             onClick={() => {
               localStorage.removeItem("token");
               navigate("/");
@@ -238,12 +264,23 @@ function MemberPage() {
             }}
             style={{
               position: "fixed",
-              bottom: 0,
-              width: "100%",
+              bottom: "10px",
+              right: "5px",
+              width: "auto",
               zIndex: 1000,
+              padding: "15px",
+              cursor: "pointer",
             }}
           >
-            <span style={{ color: "red" }}>יציאה</span>
+            <span
+              style={{
+                fontWeight: "600",
+                color: "#ff4d4f",
+                letterSpacing: "1px",
+              }}
+            >
+              יציאה
+            </span>
           </Menu.Item>
         </Menu>
       </Drawer>
