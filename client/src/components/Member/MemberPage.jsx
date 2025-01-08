@@ -22,7 +22,7 @@ function MemberPage() {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [currentMenuKey, setCurrentMenuKey] = useState(null);
-  const { user, loading } = useUser();
+  const { user, setToken, loading } = useUser();
 
   useEffect(() => {
     const handleResize = () => {
@@ -38,14 +38,12 @@ function MemberPage() {
   }, []);
 
   useEffect(() => {
-    if (user) {
+    if (loading || !user) {
+      return;
+    } else {
       setFullName(`${user.first_name} ${user.last_name}`);
     }
   }, [user, loading]);
-
-  if (loading) {
-    return;
-  }
 
   const menuItems = [
     {
@@ -133,7 +131,7 @@ function MemberPage() {
               key="logout"
               icon={<LogoutOutlined style={{ color: "#ff4d4f" }} />}
               onClick={() => {
-                localStorage.removeItem("token");
+                setToken(null);
                 navigate("/");
               }}
               style={{
@@ -262,7 +260,7 @@ function MemberPage() {
             key="logout"
             icon={<LogoutOutlined style={{ color: "#ff4d4f" }} />}
             onClick={() => {
-              localStorage.removeItem("token");
+              setToken(null);
               navigate("/");
               setDrawerVisible(false);
             }}

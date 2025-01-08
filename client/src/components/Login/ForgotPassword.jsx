@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useSettings } from "../../contexts/SettingsContext";
 import API_URL from "../../config";
@@ -7,6 +7,7 @@ const ForgotPassword = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { settings, loading } = useSettings();
 
   if (loading) {
@@ -21,6 +22,7 @@ const ForgotPassword = ({ onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       const response = await axios.post(`${API_URL}/forgot-password`, {
@@ -45,6 +47,8 @@ const ForgotPassword = ({ onClose }) => {
       } else {
         setMessage("שגיאה בשליחת הבקשה. נסה שנית.");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -78,10 +82,13 @@ const ForgotPassword = ({ onClose }) => {
             width: "100%",
           }}
         />
-        <button type="submit">שלח קישור לאיפוס סיסמה</button>
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? "שולח..." : "שלח קישור לאיפוס סיסמה"}
+        </button>
       </form>
       {message && (
         <div
+          className={`message ${messageType}`}
           style={{
             marginTop: "20px",
             color: messageType === "success" ? "green" : "red",

@@ -8,9 +8,9 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
-    const token = JSON.parse(localStorage.getItem("token"));
     const fetchData = async () => {
       try {
         const userResponse = await axios.get(`${API_URL}/users`, {
@@ -31,10 +31,12 @@ export const UserProvider = ({ children }) => {
     if (token) {
       fetchData();
     }
-  }, []);
+  }, [token]);
 
   return (
-    <UserContext.Provider value={{ user, setUser, settings, loading }}>
+    <UserContext.Provider
+      value={{ user, setUser, setToken, settings, setSettings, loading }}
+    >
       {children}
     </UserContext.Provider>
   );
