@@ -4,7 +4,6 @@ import axios from "axios";
 import dayjs from "dayjs";
 import "dayjs/locale/he";
 import CreditCard from "../payment/CreditCard";
-import SendEmail from "./SendEmail";
 import API_URL from "../../config";
 import { useUser } from "../../contexts/UserContext";
 const { Option } = Select;
@@ -19,18 +18,20 @@ const DonationForm = () => {
   const [donationData, setDonationData] = useState({});
   const [customerDetails, setCustomerDetails] = useState({});
   const [sendEmail, setSendEmail] = useState(false);
-  const { user, settings, loading } = useUser();
+  const { user, settings } = useUser();
   const date = new Date().toISOString();
 
   useEffect(() => {
-    const fullName = `${user.first_name} ${user.last_name}`;
-    setCustomerDetails({
-      name: fullName,
-      email: user.email,
-      phone: user.phone,
-      description: "תרומה",
-    });
-  }, []);
+    if (user) {
+      const fullName = `${user.first_name} ${user.last_name}`;
+      setCustomerDetails({
+        name: fullName,
+        email: user.email,
+        phone: user.phone,
+        description: "תרומה",
+      });
+    }
+  }, [user]);
 
   const onFinishDonation = (values) => {
     setDonationData(values);
@@ -38,7 +39,7 @@ const DonationForm = () => {
   };
 
   const handlePaymentSuccess = () => {
-    if (loading) {
+    if (!user) {
       message.error("שגיאה: פרטי משתמש חסרים. התחבר מחדש ונסה שוב.");
       return;
     }
@@ -197,30 +198,9 @@ const DonationForm = () => {
                 amount={donationData.amount}
                 onPaymentSuccess={handlePaymentSuccess}
                 customerDetails={customerDetails}
+                subject={`סיכום תרומה בית הכנסת ${settings.synagogueName}`}
+                text={emailSummary}
               />
-              {/* <Button
-                type="default"
-                onClick={() => setCurrentStep(1)}
-                style={{ marginTop: "20px" }}
-                block
-              >
-                חזור לעריכת התרומה
-              </Button> */}
-              {sendEmail && (
-                <SendEmail
-                  to={user.email}
-                  subject={`סיכום תרומה בית הכנסת ${settings.synagogueName}`}
-                  text={emailSummary}
-                  onComplete={(success) => {
-                    if (success) {
-                      console.log("Email sent successfully");
-                    } else {
-                      console.log("Failed to send email");
-                    }
-                    setSendEmail(false);
-                  }}
-                />
-              )}
             </div>
           )}
         </>

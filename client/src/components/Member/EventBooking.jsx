@@ -8,7 +8,6 @@ import {
   InputNumber,
   Steps,
   Card,
-  Result,
   message,
   Alert,
   Tooltip,
@@ -197,6 +196,7 @@ const EventBooking = () => {
 
   // פונקציה להתאמת עיצוב התאריכים בלוח
   const dateRender = (current) => {
+    const today = dayjs(); // התאריך הנוכחי
     const formattedDate = current.format("YYYY-MM-DD");
     const bookingsForDate = bookedTimes.filter(
       (booking) => booking.date === formattedDate
@@ -206,9 +206,16 @@ const EventBooking = () => {
     let backgroundColor = "rgba(83, 196, 26, 0.49)";
     let border = "1px solid #52c41a";
     let color = "#52c41a";
+    let isDisabled = false;
 
-    if (bookingsForDate.length > 0) {
-      // setIsHallAvailable(false);
+    // אם התאריך מוקדם מהיום
+    if (current.isBefore(today, "day")) {
+      status = "תאריך עבר";
+      backgroundColor = "rgba(211, 211, 211, 0.5)";
+      border = "1px solid #d3d3d3";
+      color = "#a9a9a9";
+      isDisabled = true;
+    } else if (bookingsForDate.length > 0) {
       const totalBookedHours = bookingsForDate.reduce((acc, booking) => {
         const start = dayjs(booking.start, "HH:mm");
         const end = dayjs(booking.end, "HH:mm");
@@ -222,29 +229,28 @@ const EventBooking = () => {
         status = "תפוס";
         backgroundColor = "rgba(255, 77, 80, 0.52)";
         border = "1px solid rgb(255, 77, 80)";
-        color = " rgb(255, 77, 80)";
+        color = "rgb(255, 77, 80)";
       } else {
         // תפוס חלקית
         status = "תפוס חלקית";
         backgroundColor = "rgba(250, 173, 20, 0.52)";
         border = "1px solid #faad14";
-        color = " #faad14";
+        color = "#faad14";
       }
     }
 
     return (
       <Tooltip title={status}>
         <div
-          onClick={() => setBookedareDates(formattedDate)}
+          onClick={!isDisabled ? () => setBookedareDates(formattedDate) : null}
           style={{
             backgroundColor,
-            // color: "#fff",
             fontWeight: "500",
             padding: "3px",
             margin: "2px",
             borderRadius: "4px",
             textAlign: "center",
-            cursor: "pointer",
+            cursor: isDisabled ? "not-allowed" : "pointer",
             border,
             // color,
           }}
@@ -333,6 +339,57 @@ const EventBooking = () => {
       message.error("שגיאה בשמירת ההזמנה");
     }
   };
+
+  const emailSummary = `
+  <div style="max-width: 600px; margin: 20px auto; padding: 25px; border-radius: 10px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; direction: rtl; text-align: right; background-color: #f9f9f9; border: 1px solid #ddd;">
+    <header style="border-bottom: 1px solid #ccc; padding-bottom: 10px; margin-bottom: 15px;">
+      <h1 style="margin: 0; font-size: 20px; color: #333;">סיכום הזמנה</h1>
+      <p style="margin: 5px 0; color: #777; font-size: 13px;">${
+        selectedDate ? selectedDate.format("DD-MM-YYYY") : ""
+      }</p>
+    </header>
+    <section style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+      <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>אולמי בית הכנסת:</strong> ${
+        settings.synagogueName
+      }</p>
+      <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>שם המזמין:</strong> ${
+        user.first_name
+      } ${user.last_name}</p>
+      <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>סוג האירוע:</strong> ${eventType}</p>
+      <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>תאריך האירוע:</strong> ${
+        selectedDate ? selectedDate.format("DD-MM-YYYY") : ""
+      }</p>
+      <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>שעות האירוע:</strong> ${
+        startTime ? startTime : ""
+      } עד ${endTime ? endTime : ""}</p>
+      <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>מספר שעות:</strong> ${hours}</p>
+      <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>פרטי התקשרות:</strong> ${
+        user.phone
+      } | ${user.email}</p>
+      <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>מחיר האולם:</strong> ${
+        hours * settings.hallPricePerHour
+      } ₪</p>
+      ${
+        catering
+          ? `
+            <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>מחיר הקייטרינג:</strong> ${
+              mealCount * settings.pricePerPerson
+            } ₪</p>
+            <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>מספר מנות:</strong> ${mealCount}</p>
+          `
+          : ""
+      }
+    </section>
+    <section style="margin-top: 15px; background-color: #f7f7f7; padding: 15px; border-radius: 8px; border: 1px solid #ddd; text-align: center;">
+      <h2 style="margin: 0; font-size: 18px; color: #222;">סה"כ לתשלום</h2>
+      <p style="margin: 10px 0 0; font-size: 16px; color: #555; font-weight: bold;">${totalAmount} ₪</p>
+    </section>
+    <footer style="margin-top: 20px; text-align: center; font-size: 11px; color: #888;">
+      <p style="margin: 0;">תודה רבה על הזמנתך.</p>
+      <p style="margin: 0;">בברכה, הנהלת בית הכנסת ${settings.synagogueName}</p>
+    </footer>
+  </div>
+`;
 
   if (loading) {
     return;
@@ -539,61 +596,13 @@ const EventBooking = () => {
             amount={totalAmount}
             onPaymentSuccess={handlePaymentSuccess}
             customerDetails={customerDetails}
+            subject={`סיכום הזמנה אולמי בית הכנסת ${settings.synagogueName}`}
+            text={emailSummary}
           />
         </div>
       ),
     },
   ];
-  const emailSummary = `
-  <div style="max-width: 600px; margin: 20px auto; padding: 25px; border-radius: 10px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; direction: rtl; text-align: right; background-color: #f9f9f9; border: 1px solid #ddd;">
-    <header style="border-bottom: 1px solid #ccc; padding-bottom: 10px; margin-bottom: 15px;">
-      <h1 style="margin: 0; font-size: 20px; color: #333;">סיכום הזמנה</h1>
-      <p style="margin: 5px 0; color: #777; font-size: 13px;">${
-        selectedDate ? selectedDate.format("DD-MM-YYYY") : ""
-      }</p>
-    </header>
-    <section style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
-      <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>אולמי בית הכנסת:</strong> ${
-        settings.synagogueName
-      }</p>
-      <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>שם המזמין:</strong> ${
-        user.first_name
-      } ${user.last_name}</p>
-      <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>סוג האירוע:</strong> ${eventType}</p>
-      <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>תאריך האירוע:</strong> ${
-        selectedDate ? selectedDate.format("DD-MM-YYYY") : ""
-      }</p>
-      <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>שעות האירוע:</strong> ${
-        startTime ? startTime : ""
-      } עד ${endTime ? endTime : ""}</p>
-      <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>מספר שעות:</strong> ${hours}</p>
-      <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>פרטי התקשרות:</strong> ${
-        user.phone
-      } | ${user.email}</p>
-      <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>מחיר האולם:</strong> ${
-        hours * settings.hallPricePerHour
-      } ₪</p>
-      ${
-        catering
-          ? `
-            <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>מחיר הקייטרינג:</strong> ${
-              mealCount * settings.pricePerPerson
-            } ₪</p>
-            <p style="margin: 8px 0; font-size: 14px; color: #333;"><strong>מספר מנות:</strong> ${mealCount}</p>
-          `
-          : ""
-      }
-    </section>
-    <section style="margin-top: 15px; background-color: #f7f7f7; padding: 15px; border-radius: 8px; border: 1px solid #ddd; text-align: center;">
-      <h2 style="margin: 0; font-size: 18px; color: #222;">סה"כ לתשלום</h2>
-      <p style="margin: 10px 0 0; font-size: 16px; color: #555; font-weight: bold;">${totalAmount} ₪</p>
-    </section>
-    <footer style="margin-top: 20px; text-align: center; font-size: 11px; color: #888;">
-      <p style="margin: 0;">תודה רבה על הזמנתך.</p>
-      <p style="margin: 0;">בברכה, הנהלת בית הכנסת ${settings.synagogueName}</p>
-    </footer>
-  </div>
-`;
 
   return (
     <div style={{ padding: 20 }}>
@@ -616,30 +625,7 @@ const EventBooking = () => {
             </Button>
           )}
         </div>
-
-        {sendEmail && (
-          <SendEmail
-            to={user.email}
-            subject={`סיכום הזמנה אולמי בית הכנסת ${settings.synagogueName}`}
-            text={emailSummary}
-            onComplete={(success) => {
-              if (success) {
-                console.log("Email sent successfully");
-              } else {
-                console.log("Failed to send email");
-              }
-              setSendEmail(false);
-            }}
-          />
-        )}
       </>
-      {/* ) : (
-        <Result
-          status="success"
-          title="הזמנה בוצעה בהצלחה"
-          subTitle="פרטי ההזמנה נשלחו לכם למייל. תודה שבחרתם בנו!"
-        />
-      )} */}
     </div>
   );
 };

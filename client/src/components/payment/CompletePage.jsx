@@ -13,16 +13,21 @@ export default function CompletePage({ paymentStatus }) {
       resultTitle = "תשלום התקבל";
       resultMessage = "פרטי התשלום נשלחו לכם למייל";
       break;
+    case "onlySuccess":
+      resultStatus = "onlySuccess";
+      resultTitle = "תשלום התקבל";
+      resultMessage = "התשלום הצליח אך אירעה שגיאה בשליחת המייל";
+      break;
     case "processing":
       resultStatus = "info";
       resultTitle = "התשלום בתהליך";
-      resultMessage = "התשלום שלך בעיבוד.";
+      resultMessage = "התשלום שלך בעיבוד";
       break;
     case "error":
     default:
       resultStatus = "error";
       resultTitle = "שגיאה בתשלום";
-      resultMessage = "משהו השתבש, אנא נסה שוב.";
+      resultMessage = "משהו השתבש, אנא נסה שוב";
       break;
   }
 

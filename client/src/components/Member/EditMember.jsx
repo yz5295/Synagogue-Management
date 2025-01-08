@@ -7,30 +7,30 @@ import { useUser } from "../../contexts/UserContext";
 
 const EditMember = () => {
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(true);
   const [changePassword, setChangePassword] = useState(false);
   const [isSuccess, setIsSuccess] = useState(null);
-  const { user, setUser } = useUser();
+  const { user, setUser, loading } = useUser();
 
   const navigate = useNavigate();
 
   const token = JSON.parse(localStorage.getItem("token"));
-
   useEffect(() => {
     if (user) {
       form.setFieldsValue(user);
-      setLoading(false);
     }
-  }, [user, form]);
+  }, [user, form, loading]);
+
+  if (loading) {
+    return <div>טוען...</div>;
+  }
+
   const handleSubmit = async (values) => {
-    setLoading(true);
     try {
       const { newPassword, confirmPassword, ...userDetails } = values;
 
       if (changePassword) {
         if (newPassword !== confirmPassword) {
           message.error("הסיסמאות אינן תואמות. נסה שוב.");
-          setLoading(false);
           return;
         }
       }
@@ -57,8 +57,6 @@ const EditMember = () => {
       }
     } catch (error) {
       setIsSuccess(false);
-    } finally {
-      setLoading(false);
     }
 
     form.setFieldsValue({

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import API_URL from "../../config";
 
-function SendEmail({ to, subject, text }) {
+function SendEmail({ to, subject, text, onEmailComplete }) {
   const [senderName, setSenderName] = useState("");
   const hasSentEmail = useRef(false);
 
@@ -33,9 +33,10 @@ function SendEmail({ to, subject, text }) {
           text: formattedMessage,
           senderName: updatedSenderName,
         });
-
+        if (onEmailComplete) onEmailComplete(true);
         console.log("Response:", response.data);
       } catch (error) {
+        if (onEmailComplete) onEmailComplete(false);
         console.error("שגיאה בשליחת האיימל", error);
       }
     };

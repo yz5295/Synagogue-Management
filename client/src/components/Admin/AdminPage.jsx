@@ -21,7 +21,7 @@ const { Header, Sider, Content } = Layout;
 function AdminPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [synagogueName, setSynagogueName] = useState("ממשק גבאי");
+  const [synagogueName, setSynagogueName] = useState();
   const [collapsed, setCollapsed] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -30,11 +30,10 @@ function AdminPage() {
   const { settings, loading } = useSettings();
 
   useEffect(() => {
-    if (loading || !settings) {
-      return;
+    if (settings) {
+      setSynagogueName(`בית הכנסת ${settings.synagogueName}`);
+      document.title = `בית הכנסת ${settings.synagogueName}`;
     }
-    setSynagogueName(`בית הכנסת ${settings.synagogueName}`);
-    document.title = `בית הכנסת ${settings.synagogueName}`;
   }, [settings, loading]);
 
   useEffect(() => {
@@ -50,6 +49,10 @@ function AdminPage() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  if (loading || !settings) {
+    return <div>טוען...</div>;
+  }
 
   const menuItems = [
     {

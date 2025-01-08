@@ -21,7 +21,7 @@ const SendMessage = () => {
   const [form] = Form.useForm();
 
   if (loading) {
-    return;
+    return <div>טוען...</div>;
   }
 
   const handleSubmit = async () => {

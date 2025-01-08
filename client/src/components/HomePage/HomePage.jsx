@@ -25,10 +25,14 @@ function HomePage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  if (loading) {
+  useEffect(()=> {
+    if (settings) {
+      document.title = `בית הכנסת ${settings.synagogueName}`;
+    }
+  }, [settings])
+
+  if (loading || !settings) {
     return <div>טוען...</div>;
-  } else {
-    document.title = `בית הכנסת ${settings.synagogueName}`;
   }
 
   const Modal = ({ title, children, onClose }) => (

@@ -22,7 +22,7 @@ function MemberPage() {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [currentMenuKey, setCurrentMenuKey] = useState(null);
-  const { user, loading } = useUser();
+  const { user, settings, loading } = useUser();
 
   useEffect(() => {
     const handleResize = () => {
@@ -38,12 +38,15 @@ function MemberPage() {
   }, []);
 
   useEffect(() => {
-    if (loading || !user) {
-      return;
-    } else {
+    if (user && settings) {
       setFullName(`${user.first_name} ${user.last_name}`);
+      document.title = `בית הכנסת ${settings.synagogueName}`;
     }
   }, [user, loading]);
+
+  if (loading || !user || !settings) {
+    return <div>טוען...</div>;
+  }
 
   const menuItems = [
     {

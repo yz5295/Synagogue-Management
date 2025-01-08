@@ -4,8 +4,15 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
+import SendEmail from "../Member/SendEmail";
 
-export default function CheckoutForm({ dpmCheckerLink, onComplete }) {
+export default function CheckoutForm({
+  dpmCheckerLink,
+  onComplete,
+  to,
+  subject,
+  text,
+}) {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -13,6 +20,7 @@ export default function CheckoutForm({ dpmCheckerLink, onComplete }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isPaymentElementComplete, setIsPaymentElementComplete] =
     useState(false);
+  const [paymentSucceeded, setPaymentSucceeded] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,6 +35,15 @@ export default function CheckoutForm({ dpmCheckerLink, onComplete }) {
     try {
       const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
+        confirmParams: {
+          payment_method_data: {
+            billing_details: {
+              address: {
+                country: "IL",
+              },
+            },
+          },
+        },
         redirect: "if_required",
       });
 
@@ -39,8 +56,7 @@ export default function CheckoutForm({ dpmCheckerLink, onComplete }) {
         onComplete("error");
       } else {
         if (paymentIntent && paymentIntent.status === "succeeded") {
-          setMessage("פרטי התשלום נשלחו לכם למייל");
-          onComplete("success");
+          setPaymentSucceeded(true);
         } else if (paymentIntent && paymentIntent.status === "processing") {
           setMessage("התשלום בתהליך...");
           onComplete("processing");
@@ -54,8 +70,6 @@ export default function CheckoutForm({ dpmCheckerLink, onComplete }) {
       setMessage("אירעה שגיאה לא צפויה בעת ביצוע התשלום.");
       onComplete("error");
     }
-
-    setIsLoading(false);
   };
 
   const handlePaymentElementChange = (event) => {
@@ -64,6 +78,13 @@ export default function CheckoutForm({ dpmCheckerLink, onComplete }) {
 
   const paymentElementOptions = {
     layout: "accordion",
+    fields: {
+      billingDetails: {
+        address: {
+          country: "never",
+        },
+      },
+    },
   };
 
   return (
@@ -92,6 +113,26 @@ export default function CheckoutForm({ dpmCheckerLink, onComplete }) {
 
         {message && <div id="payment-message">{message}</div>}
       </form>
+
+      {paymentSucceeded && (
+        <div>
+          <SendEmail
+            to={to}
+            subject={subject}
+            text={text}
+            onEmailComplete={(success) => {
+              setIsLoading(false);
+              if (success) {
+                onComplete("success");
+                setMessage("פרטי התשלום נשלחו לכם למייל");
+              } else {
+                onComplete("onlySuccess");
+                setMessage("התשלום הצליח אך אירעה שגיאה בשליחת המייל");
+              }
+            }}
+          />
+        </div>
+      )}
     </>
   );
 }

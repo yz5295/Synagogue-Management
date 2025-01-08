@@ -17,7 +17,7 @@ const DonationsListUser = () => {
   const [selectedMonth, setSelectedMonth] = useState(dayjs().month() + 1);
   const [selectedYear, setSelectedYear] = useState(dayjs().year());
   const [loading, setLoading] = useState(true);
-  const { user, setUser } = useUser();
+  const { user } = useUser();
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);

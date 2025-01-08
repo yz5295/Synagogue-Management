@@ -12,8 +12,13 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     const token = JSON.parse(localStorage.getItem("token")) || getToken;
+
     const fetchData = async () => {
       try {
+        if (!token) {
+          return;
+        }
+
         const userResponse = await axios.get(`${API_URL}/users`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -31,6 +36,8 @@ export const UserProvider = ({ children }) => {
 
     if (token) {
       fetchData();
+    } else {
+      setLoading(true);
     }
   }, [getToken]);
 

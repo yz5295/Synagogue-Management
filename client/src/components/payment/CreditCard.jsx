@@ -12,6 +12,8 @@ export default function CreditCard({
   amount,
   onPaymentSuccess,
   customerDetails,
+  subject,
+  text,
 }) {
   const [clientSecret, setClientSecret] = useState("");
   const [dpmCheckerLink, setDpmCheckerLink] = useState("");
@@ -79,6 +81,9 @@ export default function CreditCard({
             <CheckoutForm
               dpmCheckerLink={dpmCheckerLink}
               onComplete={handleCheckoutComplete}
+              to={customerDetails.email}
+              subject={subject}
+              text={text}
             />
           )}
           {currentPage === "complete" && (
