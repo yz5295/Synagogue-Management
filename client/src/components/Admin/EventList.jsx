@@ -29,7 +29,6 @@ const EventList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   const currentYear = dayjs().year();
 
