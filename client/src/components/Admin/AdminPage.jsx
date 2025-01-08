@@ -14,7 +14,7 @@ import {
   MenuOutlined,
 } from "@ant-design/icons";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { useUser } from "../../contexts/UserContext";
+import { useSettings } from "../../contexts/SettingsContext";
 
 const { Header, Sider, Content } = Layout;
 
@@ -27,7 +27,7 @@ function AdminPage() {
   const [isMobile, setIsMobile] = useState(false);
   const [currentMenuKey, setCurrentMenuKey] = useState(null);
 
-  const { settings, loading } = useUser();
+  const { settings, loading } = useSettings();
 
   useEffect(() => {
     if (loading || !settings) {

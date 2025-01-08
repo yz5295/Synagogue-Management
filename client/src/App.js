@@ -18,15 +18,9 @@ import EventBooking from "./components/Member/EventBooking";
 import SendMessage from "./components/Member/SendMessage";
 import EditMember from "./components/Member/EditMember";
 import ResetPassword from "./components/Login/ResetPassword";
-import { useUser } from "./contexts/UserContext";
 import "./App.css";
 
 function App() {
-  const { loading } = useUser();
-
-  if (loading) {
-    return <div>טוען...</div>;
-  }
 
   return (
     <Router>

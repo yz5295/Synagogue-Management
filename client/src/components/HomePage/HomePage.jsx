@@ -6,27 +6,14 @@ import PrayerTimes from "./PrayerTimes";
 import Messages from "./Messages";
 import Congratulations from "./Congratulations";
 import "../../style/HomePage.css";
-import { useUser } from "../../contexts/UserContext";
+import { useSettings } from "../../contexts/SettingsContext";
 
 function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const { settings, loading } = useUser();
+  const { settings, loading } = useSettings();
 
   const [showDayTimes, setShowDayTimes] = useState(false);
-
-  useEffect(() => {
-    // console.log("loading:", loading);
-    // console.log("settings:", settings);
-
-    // document.title = "בית הכנסת";
-    if (loading || !settings) {
-      return;
-    }
-    // console.log("loading:", loading);
-    // console.log("settings:", settings);
-    document.title = `בית הכנסת ${settings.synagogueName}`;
-  }, [loading, settings]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -37,6 +24,12 @@ function HomePage() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  if (loading) {
+    return <div>טוען...</div>;
+  } else {
+    document.title = `בית הכנסת ${settings.synagogueName}`;
+  }
 
   const Modal = ({ title, children, onClose }) => (
     <div className="modal-overlay">

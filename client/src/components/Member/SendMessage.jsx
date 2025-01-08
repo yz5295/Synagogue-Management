@@ -15,10 +15,14 @@ const SendMessage = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
-  const { user } = useUser();
+  const { user, loading } = useUser();
 
   const navigate = useNavigate();
   const [form] = Form.useForm();
+
+  if (loading) {
+    return;
+  }
 
   const handleSubmit = async () => {
     const messageData = {

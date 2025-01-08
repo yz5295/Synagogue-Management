@@ -11,7 +11,6 @@ const { Option } = Select;
 
 const DonationForm = () => {
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
   const [result, setResult] = useState("");
   const [showResult, setShowResult] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
@@ -20,7 +19,7 @@ const DonationForm = () => {
   const [donationData, setDonationData] = useState({});
   const [customerDetails, setCustomerDetails] = useState({});
   const [sendEmail, setSendEmail] = useState(false);
-  const { user, settings } = useUser();
+  const { user, settings, loading } = useUser();
   const date = new Date().toISOString();
 
   useEffect(() => {
@@ -39,7 +38,7 @@ const DonationForm = () => {
   };
 
   const handlePaymentSuccess = () => {
-    if (Object.keys(customerDetails).length === 0) {
+    if (loading) {
       message.error("שגיאה: פרטי משתמש חסרים. התחבר מחדש ונסה שוב.");
       return;
     }
@@ -48,7 +47,6 @@ const DonationForm = () => {
   };
 
   const onFinishPayment = async () => {
-    setLoading(true);
     setResult("");
     setShowResult(false);
 

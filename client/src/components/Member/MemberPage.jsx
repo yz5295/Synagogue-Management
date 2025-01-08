@@ -22,7 +22,7 @@ function MemberPage() {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [currentMenuKey, setCurrentMenuKey] = useState(null);
-  const { user } = useUser();
+  const { user, loading } = useUser();
 
   useEffect(() => {
     const handleResize = () => {
@@ -42,6 +42,10 @@ function MemberPage() {
       setFullName(`${user.first_name} ${user.last_name}`);
     }
   }, [user]);
+
+  if (loading) {
+    return;
+  }
 
   const menuItems = [
     {

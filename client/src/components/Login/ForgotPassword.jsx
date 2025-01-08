@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useUser } from "../../contexts/UserContext";
+import { useSettings } from "../../contexts/SettingsContext";
 import API_URL from "../../config";
 
 const ForgotPassword = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
-  const { settings } = useUser();
+  const { settings, loading } = useSettings();
+
+  if (loading) {
+    return;
+  }
 
   const synagogueName = settings.synagogueName;
 

@@ -30,15 +30,11 @@ export const UserProvider = ({ children }) => {
 
     if (token) {
       fetchData();
-    } else {
-      setLoading(false);
     }
   }, []);
 
   return (
-    <UserContext.Provider
-      value={{ user, setUser, settings, setSettings, loading }}
-    >
+    <UserContext.Provider value={{ user, setUser, settings, loading }}>
       {children}
     </UserContext.Provider>
   );

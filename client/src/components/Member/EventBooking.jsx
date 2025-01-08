@@ -50,7 +50,7 @@ const EventBooking = () => {
   const [customerDetails, setCustomerDetails] = useState({});
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [sendEmail, setSendEmail] = useState(false);
-  const { user, settings } = useUser();
+  const { user, settings, loading } = useUser();
 
   const generateTimeOptions = (start = 8, end = 23) => {
     const options = [];
@@ -333,6 +333,10 @@ const EventBooking = () => {
       message.error("שגיאה בשמירת ההזמנה");
     }
   };
+
+  if (loading) {
+    return;
+  }
 
   if (!settings || !dataLoaded) {
     return (
