@@ -5,6 +5,7 @@ import "../../style/LoginMenu.css";
 import axios from "axios";
 import API_URL from "../../config";
 import ForgotPassword from "./ForgotPassword";
+import { useUser } from "../../contexts/UserContext";
 
 function LoginMenu({ menuOpen, toggleMenu }) {
   const navigate = useNavigate();
@@ -48,6 +49,7 @@ function LoginMenu({ menuOpen, toggleMenu }) {
   });
   const [confirmPasswordSettings, setConfirmPasswordSettings] = useState("");
   const [settingsError, setSettingsError] = useState("");
+  const { setGetToken } = useUser();
 
   const checkSettingsOnOpenAdmin = async () => {
     try {
@@ -154,6 +156,7 @@ function LoginMenu({ menuOpen, toggleMenu }) {
       const result = await response.json();
 
       if (response.ok) {
+        setGetToken(result.token);
         localStorage.setItem("token", JSON.stringify(result.token));
         navigate("/member");
       } else {
