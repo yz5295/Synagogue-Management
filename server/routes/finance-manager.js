@@ -79,9 +79,6 @@ router.post("/update-finance", async (req, res) => {
     const [events] = await pool.query("SELECT * FROM events");
     const financeData = [];
 
-    console.log(donations.length);
-    console.log(events.length);
-
     donations.forEach((donation) => {
       financeData.push({
         type: "income",
@@ -90,8 +87,7 @@ router.post("/update-finance", async (req, res) => {
         date: donation.date,
         amount: donation.amount,
         readOnly: true,
-        original_id: donation.id,
-        record_type: "donation",
+        original_id: `donation_${donation.id}`,
       });
     });
 
@@ -103,17 +99,14 @@ router.post("/update-finance", async (req, res) => {
         date: event.orderDate,
         amount: event.amount,
         readOnly: true,
-        original_id: event.id,
-        record_type: "event",
+        original_id: `event_${event.id}`,
       });
     });
 
-    console.log(financeData.length);
-
     const insertPromises = financeData.map((entry) => {
       return pool.query(
-        `INSERT INTO finance_manager (type, category, details, date, amount, readOnly, original_id, record_type)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `INSERT INTO finance_manager (type, category, details, date, amount, readOnly, original_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE 
            type = VALUES(type),
            category = VALUES(category),
@@ -129,7 +122,6 @@ router.post("/update-finance", async (req, res) => {
           entry.amount,
           entry.readOnly,
           entry.original_id,
-          entry.record_type,
         ]
       );
     });
@@ -163,9 +155,11 @@ router.get("/get-transaction", async (req, res) => {
   }
 
   try {
-    const [rows] = await db.query(
+    const prefixedOriginalId = `${type}_${original_id}`;
+
+    const [rows] = await pool.query(
       "SELECT * FROM finance_manager WHERE type = ? AND original_id = ?",
-      ["income", original_id]
+      ["income", prefixedOriginalId]
     );
 
     if (rows.length === 0) {
@@ -175,7 +169,7 @@ router.get("/get-transaction", async (req, res) => {
     const transaction = rows[0];
 
     if (type === "donation") {
-      const [donations] = await db.query(
+      const [donations] = await pool.query(
         "SELECT * FROM donations WHERE id = ?",
         [original_id]
       );
@@ -185,7 +179,7 @@ router.get("/get-transaction", async (req, res) => {
     }
 
     if (type === "event") {
-      const [events] = await db.query("SELECT * FROM events WHERE id = ?", [
+      const [events] = await pool.query("SELECT * FROM events WHERE id = ?", [
         original_id,
       ]);
       if (events.length > 0) {

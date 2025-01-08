@@ -41,7 +41,7 @@ function MemberPage() {
     if (user) {
       setFullName(`${user.first_name} ${user.last_name}`);
     }
-  }, [user]);
+  }, [user, loading]);
 
   if (loading) {
     return;

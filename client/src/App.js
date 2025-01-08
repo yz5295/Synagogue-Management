@@ -9,7 +9,7 @@ import AddCongratulations from "./components/Admin/AddCongratulations";
 import MemberList from "./components/Admin/MemberList";
 import DonationList from "./components/Admin/DonationList";
 import EventList from "./components/Admin/EventList";
-import FinanceManager from "./components/Admin/FinanceManager ";
+import FinanceManager from "./components/Admin/FinanceManager";
 import Index from "./components/Admin/Index";
 import Settings from "./components/Admin/Settings";
 import DonationForm from "./components/Member/DonationForm";
@@ -21,7 +21,6 @@ import ResetPassword from "./components/Login/ResetPassword";
 import "./App.css";
 
 function App() {
-
   return (
     <Router>
       <Routes>

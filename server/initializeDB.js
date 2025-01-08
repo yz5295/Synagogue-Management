@@ -72,20 +72,23 @@ const initializeDatabase = async () => {
       //   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       // )`,
       // `CREATE TABLE IF NOT EXISTS finance_manager (
-      //   id INT AUTO_INCREMENT PRIMARY KEY,
-      //   type ENUM('expense', 'income') NOT NULL,
-      //   category VARCHAR(255) NOT NULL,
-      //   details VARCHAR(255),
-      //   date DATETIME NOT NULL,
-      //   amount DECIMAL(10, 2) NOT NULL,
-      //   readOnly BOOLEAN DEFAULT FALSE,
-      //   original_id INT,
-      //   UNIQUE KEY original_id (original_id)
-      // )`,
+      //  id INT AUTO_INCREMENT PRIMARY KEY,
+      //  type ENUM('expense', 'income') NOT NULL,
+      //  category VARCHAR(255) NOT NULL,
+      //  details VARCHAR(255),
+      //  date DATETIME NOT NULL,
+      //  amount DECIMAL(10, 2) NOT NULL,
+      //  readOnly BOOLEAN DEFAULT FALSE,
+      //  original_id VARCHAR(255),
+      //  UNIQUE KEY unique_record (original_id)
+      // );
+      // `,
       `ALTER TABLE finance_manager
-ADD COLUMN record_type VARCHAR(20),
-ADD UNIQUE KEY unique_record (original_id, record_type);
-`,
+DROP COLUMN record_type, 
+MODIFY original_id VARCHAR(255),
+DROP INDEX unique_record,
+ADD UNIQUE(original_id);
+       `,
     ];
 
     for (const query of queries) {

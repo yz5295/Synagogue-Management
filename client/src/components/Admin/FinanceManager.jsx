@@ -77,6 +77,8 @@ const FinanceManager = () => {
     try {
       await updateFinanceManager();
       const response = await axios.get(`${API_URL}/financemanager`);
+      console.log(response.data);
+
       const sortedData = response.data.sort(
         (a, b) => dayjs(a.date).unix() - dayjs(b.date).unix()
       );
@@ -192,6 +194,7 @@ const FinanceManager = () => {
 
       if (response.ok) {
         const data = await response.json();
+        console.log(data.length);
       } else {
         console.error("עדכון נתונים נכשל");
       }
@@ -205,29 +208,33 @@ const FinanceManager = () => {
     setLoadingData(true);
     setInformation(null);
 
-    const orginalid = record.original_id;
+    const originalId = record.original_id;
+
+    const [prefix, id] = originalId.split("_");
 
     try {
-      if (record.category === "תרומה") {
+      if (prefix === "donation") {
         const response = await axios.get(`${API_URL}/donation`);
         const data = response.data;
         const matchedDonation = data.find(
-          (donation) => donation.donation_id === orginalid
+          (donation) => donation.donation_id === parseInt(id)
         );
         if (matchedDonation) {
           setInformation(matchedDonation);
         } else {
           console.warn("No matching donation found for the given ID");
         }
-      } else if (record.category === "הזמנת אולם") {
+      } else if (prefix === "event") {
         const response = await axios.get(`${API_URL}/eventlist/events`);
         const data = response.data;
-        const matchedEvent = data.find((event) => event.id === orginalid);
+        const matchedEvent = data.find((event) => event.id === parseInt(id)); // המרת id למספר
         if (matchedEvent) {
           setInformation(matchedEvent);
         } else {
           console.warn("No matching event found for the given ID");
         }
+      } else {
+        console.warn("Unsupported prefix in original_id:", prefix);
       }
     } catch (error) {
       console.error("שגיאה בטעינת מידע");
