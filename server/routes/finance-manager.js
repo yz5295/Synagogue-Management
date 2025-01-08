@@ -72,12 +72,15 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// נתיב לעדכון Finance על ידי ייבוא Donations ו-Events
+// נתיב לעדכון הכנסות על ידי ייבוא Donations ו-Events
 router.post("/update-finance", async (req, res) => {
   try {
     const [donations] = await pool.query("SELECT * FROM donations");
     const [events] = await pool.query("SELECT * FROM events");
     const financeData = [];
+
+    console.log(donations.length);
+    console.log(events.length);
 
     donations.forEach((donation) => {
       financeData.push({
@@ -88,6 +91,7 @@ router.post("/update-finance", async (req, res) => {
         amount: donation.amount,
         readOnly: true,
         original_id: donation.id,
+        record_type: "donation",
       });
     });
 
@@ -100,13 +104,16 @@ router.post("/update-finance", async (req, res) => {
         amount: event.amount,
         readOnly: true,
         original_id: event.id,
+        record_type: "event",
       });
     });
 
+    console.log(financeData.length);
+
     const insertPromises = financeData.map((entry) => {
       return pool.query(
-        `INSERT INTO finance_manager (type, category, details, date, amount, readOnly, original_id)
-         VALUES (?, ?, ?, ?, ?, ?, ?)
+        `INSERT INTO finance_manager (type, category, details, date, amount, readOnly, original_id, record_type)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE 
            type = VALUES(type),
            category = VALUES(category),
@@ -122,6 +129,7 @@ router.post("/update-finance", async (req, res) => {
           entry.amount,
           entry.readOnly,
           entry.original_id,
+          entry.record_type,
         ]
       );
     });
