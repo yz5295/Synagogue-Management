@@ -50,7 +50,7 @@ function AdminPage() {
     };
   }, []);
 
-  if (loading || !settings || !settings.settingsExist) {
+  if (loading || !settings) {
     return <div>טוען...</div>;
   }
 

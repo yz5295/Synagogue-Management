@@ -77,7 +77,6 @@ const FinanceManager = () => {
     try {
       await updateFinanceManager();
       const response = await axios.get(`${API_URL}/financemanager`);
-      console.log(response.data);
 
       const sortedData = response.data.sort(
         (a, b) => dayjs(a.date).unix() - dayjs(b.date).unix()
@@ -194,7 +193,6 @@ const FinanceManager = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data.length);
       } else {
         console.error("עדכון נתונים נכשל");
       }

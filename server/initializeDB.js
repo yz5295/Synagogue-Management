@@ -31,11 +31,14 @@ const initializeDatabase = async () => {
         time TIME NOT NULL,
         day_type ENUM('weekday', 'shabbat') NOT NULL,
         order_index INT NOT NULL DEFAULT 0
-      )``CREATE TABLE IF NOT EXISTS settings (
+      )`,
+      `CREATE TABLE IF NOT EXISTS settings (
         id INT AUTO_INCREMENT PRIMARY KEY,
         synagogue_name VARCHAR(255) NOT NULL,
         manager_name VARCHAR(255) NOT NULL,
         administrator_password VARCHAR(255) NOT NULL,
+        synagogue_address VARCHAR(255) NOT NULL,
+        synagogue_city VARCHAR(255) NOT NULL,
         hall_price_per_hour DECIMAL(10, 2) NOT NULL,
         price_per_person DECIMAL(10, 2) NOT NULL
       )`,
