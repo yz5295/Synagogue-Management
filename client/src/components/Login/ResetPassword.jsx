@@ -76,6 +76,8 @@ const ResetPassword = () => {
       if (response.ok) {
         setMessageType("success");
         setMessage(data.message);
+        setNewPassword("");
+        setConfirmPassword("");
       } else {
         setMessageType("error");
         setMessage(data.error);
