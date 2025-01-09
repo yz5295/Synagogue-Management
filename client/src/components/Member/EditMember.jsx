@@ -70,10 +70,6 @@ const EditMember = () => {
     navigate("/member");
   };
 
-  // if (!user) {
-  //   return <p>טוען נתונים...</p>;
-  // }
-
   if (isSuccess !== null) {
     return (
       <Result
@@ -182,40 +178,44 @@ const EditMember = () => {
           </div>
         </Form.Item>
 
-        {changePassword && (
-          <div style={{ display: "flex", gap: "16px" }}>
-            <Form.Item
-              label="סיסמה חדשה"
-              name="newPassword"
-              rules={[
-                { required: true, message: "יש להזין סיסמה חדשה" },
-                { min: 6, message: "הסיסמה חייבת להכיל לפחות 6 תווים" },
-              ]}
-              style={{ flex: 1 }}
-            >
-              <Input.Password placeholder="סיסמה חדשה" />
-            </Form.Item>
-            <Form.Item
-              label="אימות סיסמה"
-              name="confirmPassword"
-              dependencies={["newPassword"]}
-              rules={[
-                { required: true, message: "יש לאמת את הסיסמה" },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue("newPassword") === value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error("הסיסמאות אינן תואמות"));
-                  },
-                }),
-              ]}
-              style={{ flex: 1 }}
-            >
-              <Input.Password placeholder="אימות סיסמה" />
-            </Form.Item>
-          </div>
-        )}
+        <div style={{ display: "flex", gap: "16px" }}>
+          <Form.Item
+            label="סיסמה חדשה"
+            name="newPassword"
+            rules={[
+              { required: changePassword, message: "יש להזין סיסמה חדשה" },
+              { min: 6, message: "הסיסמה חייבת להכיל לפחות 6 תווים" },
+            ]}
+            style={{ flex: 1 }}
+          >
+            <Input.Password
+              placeholder="סיסמה חדשה"
+              disabled={!changePassword}
+            />
+          </Form.Item>
+          <Form.Item
+            label="אימות סיסמה"
+            name="confirmPassword"
+            dependencies={["newPassword"]}
+            rules={[
+              { required: changePassword, message: "יש לאמת את הסיסמה" },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("newPassword") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error("הסיסמאות אינן תואמות"));
+                },
+              }),
+            ]}
+            style={{ flex: 1 }}
+          >
+            <Input.Password
+              placeholder="אימות סיסמה"
+              disabled={!changePassword}
+            />
+          </Form.Item>
+        </div>
 
         <div
           style={{

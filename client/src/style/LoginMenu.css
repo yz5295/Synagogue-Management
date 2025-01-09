@@ -136,9 +136,21 @@
   margin-top: 10px;
 } */
 
+.success-message {
+  padding: 16px;
+  border-radius: 8px;
+  max-width: 400px;
+  margin: 20px auto;
+}
+.modal-content-simple2.success-message {
+  animation: fadeIn 0.3s ease-in-out;
+}
 .success-message p {
-  color: green;
+  color: #1e7221;
   font-weight: bold;
+
+  margin: 0;
+  font-size: 18px;
 }
 
 .settings-form input {
@@ -235,7 +247,7 @@
 }
 
 .message.success {
-  background-color: #d4edda;
+  background-color: #b9efc5;
   color: #155724;
 }
 

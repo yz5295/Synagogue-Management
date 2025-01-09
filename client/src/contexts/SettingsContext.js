@@ -12,7 +12,9 @@ export const SettingsProvider = ({ children }) => {
       try {
         const response = await fetch(`${API_URL}/settings`);
         const data = await response.json();
-        setSettings(data);
+        if (JSON.stringify(data) !== JSON.stringify(settings)) {
+          setSettings(data);
+        }
       } catch (error) {
         console.error("שגיאה בשליפת ההגדרות:", error);
       } finally {
@@ -21,7 +23,7 @@ export const SettingsProvider = ({ children }) => {
     };
 
     fetchSettings();
-  }, []);
+  }, [settings]);
 
   return (
     <SettingsContext.Provider value={{ settings, setSettings, loading }}>

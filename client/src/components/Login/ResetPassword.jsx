@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useSettings } from "../../contexts/SettingsContext";
+
 import API_URL from "../../config";
 
 const ResetPassword = () => {
@@ -9,6 +11,7 @@ const ResetPassword = () => {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const navigate = useNavigate();
+  const { settings, loading } = useSettings();
 
   useEffect(() => {
     if (!token) {
@@ -16,6 +19,16 @@ const ResetPassword = () => {
       setMessage("הטוקן לא נמצא.");
     }
   }, [token]);
+
+  useEffect(() => {
+    if (settings) {
+      document.title = `בית הכנסת ${settings.synagogueName}`;
+    }
+  }, [settings]);
+
+  if (loading || !settings) {
+    return;
+  }
 
   const handlePasswordChange = (e) => {
     setNewPassword(e.target.value);

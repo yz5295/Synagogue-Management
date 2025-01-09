@@ -47,6 +47,26 @@ function MemberPage() {
   if (loading || !user || !settings) {
     return <div>טוען...</div>;
   }
+  if (!settings.settingsExist) {
+    document.title = "בית הכנסת";
+    return (
+      <div
+        style={{
+          textAlign: "center",
+          marginTop: "50px",
+          padding: "20px",
+        }}
+      >
+        <h1 style={{ color: "#333", fontWeight: "bold" }}>
+          ברוכים הבאים לבית הכנסת
+        </h1>
+        <p style={{ fontSize: "18px", color: "#555" }}>
+          הגדרות ראשוניות עדיין לא הוגדרו. אנא נסו שוב במועד מאוחר יותר או פנו
+          למנהל המערכת.
+        </p>
+      </div>
+    );
+  }
 
   const menuItems = [
     {

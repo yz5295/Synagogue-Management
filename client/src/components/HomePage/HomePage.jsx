@@ -25,11 +25,13 @@ function HomePage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(()=> {
-    if (settings) {
+  useEffect(() => {
+    if (settings && settings.settingsExist) {
       document.title = `בית הכנסת ${settings.synagogueName}`;
+    } else {
+      document.title = `בית הכנסת`;
     }
-  }, [settings])
+  }, [settings]);
 
   if (loading || !settings) {
     return <div>טוען...</div>;

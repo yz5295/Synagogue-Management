@@ -4,11 +4,19 @@ import { useNavigate } from "react-router-dom";
 import "../../style/LoginMenu.css";
 import axios from "axios";
 import API_URL from "../../config";
-import ForgotPassword from "./ForgotPassword";
 import { useUser } from "../../contexts/UserContext";
+import { useSettings } from "../../contexts/SettingsContext";
+
+import AdminLoginModal from "./AdminLoginModal";
+import SettingsModal from "./SettingsModal";
+import MemberLoginModal from "./MemberLoginModal";
+import RegisterModal from "./RegisterModal";
+import ForgotPasswordModal from "./ForgotPasswordModal";
 
 function LoginMenu({ menuOpen, toggleMenu }) {
   const navigate = useNavigate();
+  const { setGetToken } = useUser();
+  const { setSettings } = useSettings();
 
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
@@ -16,7 +24,6 @@ function LoginMenu({ menuOpen, toggleMenu }) {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] =
     useState(false);
-
   const [isSuccessVisible, setIsSuccessVisible] = useState(false);
   const [isSavedSettings, setIsSavedSettings] = useState(false);
 
@@ -43,13 +50,14 @@ function LoginMenu({ menuOpen, toggleMenu }) {
   const [formData, setFormData] = useState({
     synagogueName: "",
     managerName: "",
+    synagogueAddress: "",
+    synagogueCity: "",
     administratorPassword: "",
     hallPricePerHour: 0,
     pricePerPerson: 0,
   });
   const [confirmPasswordSettings, setConfirmPasswordSettings] = useState("");
   const [settingsError, setSettingsError] = useState("");
-  const { setGetToken } = useUser();
 
   const checkSettingsOnOpenAdmin = async () => {
     try {
@@ -92,8 +100,6 @@ function LoginMenu({ menuOpen, toggleMenu }) {
   };
 
   const handleOpenRegisterModal = () => {
-    console.log("API URL:", API_URL);
-
     setIsRegisterModalOpen(true);
     setRegisterForm({
       firstName: "",
@@ -115,6 +121,16 @@ function LoginMenu({ menuOpen, toggleMenu }) {
   };
 
   const handleCloseSettingsModal = () => {
+    setConfirmPasswordSettings("");
+    setFormData({
+      synagogueName: "",
+      managerName: "",
+      synagogueAddress: "",
+      synagogueCity: "",
+      hallPricePerHour: "",
+      pricePerPerson: "",
+      administratorPassword: "",
+    });
     setIsSettingsModalOpen(false);
   };
 
@@ -130,12 +146,18 @@ function LoginMenu({ menuOpen, toggleMenu }) {
 
       if (response.status === 200) {
         navigate("/admin");
-      } else {
-        setAdminError(response.data.message || "סיסמה שגויה, נסה שוב.");
       }
     } catch (err) {
+      if (err.response) {
+        if (err.response.status === 401) {
+          setAdminError(err.response.data.message || "סיסמה שגויה, נסה שוב.");
+        } else {
+          setAdminError("שגיאה בחיבור לשרת. נסה שוב מאוחר יותר.");
+        }
+      } else {
+        setAdminError("שגיאה בחיבור לשרת. נסה שוב מאוחר יותר.");
+      }
       console.error("Error during admin login:", err);
-      setAdminError("שגיאה בחיבור לשרת. נסה שוב מאוחר יותר.");
     }
   };
 
@@ -174,29 +196,41 @@ function LoginMenu({ menuOpen, toggleMenu }) {
     if (
       !formData.synagogueName ||
       !formData.managerName ||
+      !formData.synagogueAddress ||
+      !formData.synagogueCity ||
       !formData.administratorPassword ||
       formData.hallPricePerHour < 0 ||
       formData.pricePerPerson < 0
     ) {
-      setSettingsError("אנא מלא את כל השדות כראוי.");
+      setSettingsError("אנא מלא את כל השדות.");
       return;
     }
 
     if (formData.administratorPassword !== confirmPasswordSettings) {
+      {
+        console.log("opo");
+      }
       setSettingsError("הסיסמאות אינן תואמות.");
+      return;
+    }
+
+    if (formData.administratorPassword.length < 6) {
+      setSettingsError("הסיסמה חייבת להכיל לפחות 6 תווים.");
       return;
     }
 
     try {
       const response = await axios.post(`${API_URL}/settings`, formData);
       if (response.status === 200) {
+        setSettings(formData);
+        setIsSettingsModalOpen(false);
         setIsSuccessVisible(true);
         setSettingsError("");
         setTimeout(() => {
           setIsSuccessVisible(false);
           setIsSavedSettings(true);
           setIsSettingsModalOpen(false);
-        }, 2000);
+        }, 3000);
       } else {
         setSettingsError("שגיאה בשמירת ההגדרות.");
       }
@@ -266,12 +300,13 @@ function LoginMenu({ menuOpen, toggleMenu }) {
       });
 
       if (response.status === 201) {
+        setIsMemberModalOpen(false);
         setRegistrationSuccess(true);
         setRegisterError("");
         setTimeout(() => {
           setIsRegisterModalOpen(false);
           setRegistrationSuccess(false);
-        }, 2000);
+        }, 3000);
       } else {
         setRegisterError("שגיאה בהוספת המתפלל.");
       }
@@ -311,6 +346,7 @@ function LoginMenu({ menuOpen, toggleMenu }) {
 
   const handleOpenForgotPasswordModal = () => {
     setIsForgotPasswordModalOpen(true);
+    setIsMemberModalOpen(false);
   };
 
   const handleCloseForgotPasswordModal = () => {
@@ -337,286 +373,57 @@ function LoginMenu({ menuOpen, toggleMenu }) {
       )}
 
       {isAdminModalOpen && (
-        <div className="modal-overlay-simple">
-          <div className="modal-content-simple">
-            <h3>נא להזין סיסמת מנהל</h3>
-            <input
-              type="password"
-              value={adminPassword}
-              onChange={(e) => setAdminPassword(e.target.value)}
-              placeholder="סיסמה"
-            />
-            {adminError && <p className="error-message">{adminError}</p>}
-            <button onClick={handleAdminPasswordSubmit}>כניסה</button>
-            <button onClick={handleCloseAdminModal}>סגור</button>
-          </div>
-        </div>
+        <AdminLoginModal
+          adminPassword={adminPassword}
+          setAdminPassword={setAdminPassword}
+          adminError={adminError}
+          handleAdminPasswordSubmit={handleAdminPasswordSubmit}
+          handleCloseAdminModal={handleCloseAdminModal}
+        />
       )}
 
       {isSettingsModalOpen && (
-        <div className="modal-overlay-simple">
-          <div className="modal-content-simple2">
-            {isSuccessVisible ? (
-              <div className="success-message">
-                <p>הפרטים נשמרו בהצלחה!</p>
-              </div>
-            ) : (
-              <form
-                onSubmit={handleSettingsSubmit}
-                className="settings-form .modal-content-simple"
-              >
-                <h4>לא נמצאו הגדרות, אנא הזן פרטי בית הכנסת להגדרה ראשונית:</h4>
-                <input
-                  type="text"
-                  name="synagogueName"
-                  value={formData.synagogueName}
-                  onChange={handleSettingsChange}
-                  placeholder="שם בית הכנסת"
-                  required
-                />
-                <input
-                  type="text"
-                  name="managerName"
-                  value={formData.managerName}
-                  onChange={handleSettingsChange}
-                  placeholder="שם הגבאי"
-                  required
-                />
-                <input
-                  type="password"
-                  name="administratorPassword"
-                  value={formData.administratorPassword}
-                  onChange={handleSettingsChange}
-                  placeholder="סיסמת ניהול"
-                  required
-                />
-                <input
-                  type="password"
-                  name="confirmPasswordSettings"
-                  value={confirmPasswordSettings}
-                  onChange={(e) => setConfirmPasswordSettings(e.target.value)}
-                  placeholder="אימות סיסמה"
-                  required
-                />
-                {formData.administratorPassword &&
-                  confirmPasswordSettings &&
-                  formData.administratorPassword !==
-                    confirmPasswordSettings && (
-                    <p style={{ color: "red" }}>הסיסמאות אינן תואמות</p>
-                  )}
-                <input
-                  type="number"
-                  name="hallPricePerHour"
-                  value={formData.hallPricePerHour || ""}
-                  onChange={handleSettingsChange}
-                  placeholder="מחיר האולם לשעה"
-                  required
-                />
-                <input
-                  type="number"
-                  name="pricePerPerson"
-                  value={formData.pricePerPerson || ""}
-                  onChange={handleSettingsChange}
-                  placeholder="מחיר למנה לאדם"
-                  required
-                />
-                {settingsError && (
-                  <p className="error-message">{settingsError}</p>
-                )}
-                <button
-                  type="submit"
-                  className="primary-button"
-                  disabled={
-                    formData.administratorPassword !== confirmPasswordSettings
-                  }
-                >
-                  שמור
-                </button>
-                <button
-                  type="button"
-                  className="secondary-button"
-                  onClick={handleCloseSettingsModal}
-                >
-                  סגור
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
+        <SettingsModal
+          isSuccessVisible={isSuccessVisible}
+          formData={formData}
+          confirmPasswordSettings={confirmPasswordSettings}
+          settingsError={settingsError}
+          handleSettingsSubmit={handleSettingsSubmit}
+          handleSettingsChange={handleSettingsChange}
+          setConfirmPasswordSettings={setConfirmPasswordSettings}
+          handleCloseSettingsModal={handleCloseSettingsModal}
+        />
       )}
 
       {isMemberModalOpen && (
-        <div className="modal-overlay-simple">
-          <div className="modal-content-simple">
-            <h3>כניסת מתפלל</h3>
-            <input
-              type="text"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              placeholder="שם מלא"
-              required
-            />
-            <input
-              type="password"
-              value={passwordMember}
-              onChange={(e) => setPasswordMember(e.target.value)}
-              placeholder="סיסמה"
-              required
-            />
-            {memberError && <p className="error-message">{memberError}</p>}
-            <div
-              style={{
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "space-between",
-                position: "relative",
-              }}
-            >
-              <button onClick={handleMemberSubmit}>כניסה</button>
-              <button onClick={handleCloseMemberModal}>סגור</button>
-              <div
-                style={{
-                  justifyContent: "space-between",
-                  width: "100%",
-                  marginTop: "15px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <a
-                  href="#"
-                  onClick={handleOpenRegisterModal}
-                  onMouseEnter={(e) => (e.target.style.color = "#888")}
-                  onMouseLeave={(e) => (e.target.style.color = "#000")}
-                  style={{
-                    fontSize: "15px",
-                    color: "#000",
-                    transition: "color 0.3s ease",
-                  }}
-                >
-                  הרשמה למערכת
-                </a>
-                <a
-                  href="#"
-                  onClick={handleOpenForgotPasswordModal}
-                  onMouseEnter={(e) => (e.target.style.color = "#888")}
-                  onMouseLeave={(e) => (e.target.style.color = "#000")}
-                  style={{
-                    fontSize: "15px",
-                    color: "#000",
-                    transition: "color 0.3s ease",
-                  }}
-                >
-                  שכחת את הסיסמה?
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
+        <MemberLoginModal
+          fullName={fullName}
+          setFullName={setFullName}
+          passwordMember={passwordMember}
+          setPasswordMember={setPasswordMember}
+          memberError={memberError}
+          handleMemberSubmit={handleMemberSubmit}
+          handleCloseMemberModal={handleCloseMemberModal}
+          handleOpenRegisterModal={handleOpenRegisterModal}
+          handleOpenForgotPasswordModal={handleOpenForgotPasswordModal}
+        />
       )}
 
       {isRegisterModalOpen && (
-        <div className="modal-overlay-simple">
-          <div className="modal-content-simple2">
-            <h3>הרשמה למערכת</h3>
-            {registrationSuccess ? (
-              <div className="success-message">
-                <p>הרשמה בוצעה בהצלחה!</p>
-              </div>
-            ) : (
-              <>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={registerForm.firstName}
-                  onChange={handleRegisterInputChange}
-                  placeholder="שם פרטי"
-                  required
-                />
-                <input
-                  type="text"
-                  name="lastName"
-                  value={registerForm.lastName}
-                  onChange={handleRegisterInputChange}
-                  placeholder="שם משפחה"
-                  required
-                />
-                <input
-                  type="text"
-                  name="address"
-                  value={registerForm.address}
-                  onChange={handleRegisterInputChange}
-                  placeholder="כתובת"
-                  required
-                />
-                <input
-                  type="text"
-                  name="city"
-                  value={registerForm.city}
-                  onChange={handleRegisterInputChange}
-                  placeholder="עיר"
-                  required
-                />
-                <input
-                  type="text"
-                  name="phone"
-                  value={registerForm.phone}
-                  onChange={handleRegisterInputChange}
-                  placeholder="טלפון"
-                  required
-                />
-                <input
-                  type="email"
-                  name="email"
-                  value={registerForm.email}
-                  onChange={handleRegisterInputChange}
-                  placeholder="כתובת מייל"
-                  required
-                />
-                <input
-                  type="password"
-                  name="password"
-                  value={registerForm.password}
-                  onChange={handleRegisterInputChange}
-                  placeholder="סיסמה"
-                  required
-                  minLength={6}
-                />
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={registerForm.confirmPassword}
-                  onChange={handleRegisterInputChange}
-                  placeholder="אימות סיסמה"
-                  required
-                />
-                {registerError && (
-                  <div className={`error-message`}>{registerError}</div>
-                )}
-                <button onClick={handleRegisterSubmit}>הרשמה</button>
-                <button onClick={handleCloseRegisterModal}>סגור</button>
-              </>
-            )}
-          </div>
-        </div>
+        <RegisterModal
+          registerForm={registerForm}
+          registerError={registerError}
+          registrationSuccess={registrationSuccess}
+          handleRegisterInputChange={handleRegisterInputChange}
+          handleRegisterSubmit={handleRegisterSubmit}
+          handleCloseRegisterModal={handleCloseRegisterModal}
+        />
       )}
 
       {isForgotPasswordModalOpen && (
-        <div className="modal-overlay-simple">
-          <div
-            className="modal-content-simple2"
-            style={{ position: "relative" }}
-          >
-            <ForgotPassword onClose={handleCloseForgotPasswordModal} />
-            <button
-              className="close-button-forgat"
-              onClick={handleCloseForgotPasswordModal}
-            >
-              ×
-            </button>
-          </div>
-        </div>
+        <ForgotPasswordModal
+          handleCloseForgotPasswordModal={handleCloseForgotPasswordModal}
+        />
       )}
     </div>
   );
