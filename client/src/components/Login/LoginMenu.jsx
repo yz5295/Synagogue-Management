@@ -6,6 +6,7 @@ import axios from "axios";
 import API_URL from "../../config";
 import { useUser } from "../../contexts/UserContext";
 import { useSettings } from "../../contexts/SettingsContext";
+import BeatLoader from "react-spinners/BeatLoader";
 
 import AdminLoginModal from "./AdminLoginModal";
 import SettingsModal from "./SettingsModal";
@@ -17,7 +18,7 @@ function LoginMenu({ menuOpen, toggleMenu }) {
   const navigate = useNavigate();
   const { setGetToken } = useUser();
   const { setSettings } = useSettings();
-
+  const [isLoading, setIsLoading] = useState(false);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
@@ -139,6 +140,9 @@ function LoginMenu({ menuOpen, toggleMenu }) {
       setAdminError("אנא הזן סיסמה.");
       return;
     }
+
+    setIsLoading(true);
+
     try {
       const response = await axios.post(`${API_URL}/settings/login`, {
         password: adminPassword,
@@ -158,6 +162,8 @@ function LoginMenu({ menuOpen, toggleMenu }) {
         setAdminError("שגיאה בחיבור לשרת. נסה שוב מאוחר יותר.");
       }
       console.error("Error during admin login:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -166,6 +172,9 @@ function LoginMenu({ menuOpen, toggleMenu }) {
       setMemberError("אנא מלא את כל השדות.");
       return;
     }
+
+    setIsLoading(true);
+
     try {
       const response = await fetch(`${API_URL}/users/login`, {
         method: "POST",
@@ -187,6 +196,8 @@ function LoginMenu({ menuOpen, toggleMenu }) {
     } catch (error) {
       console.error("שגיאה בעת התחברות:", error);
       setMemberError("שגיאה בשרת, נסה שוב מאוחר יותר.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -207,9 +218,6 @@ function LoginMenu({ menuOpen, toggleMenu }) {
     }
 
     if (formData.administratorPassword !== confirmPasswordSettings) {
-      {
-        console.log("opo");
-      }
       setSettingsError("הסיסמאות אינן תואמות.");
       return;
     }
@@ -288,6 +296,8 @@ function LoginMenu({ menuOpen, toggleMenu }) {
       return;
     }
 
+    setIsLoading(true);
+
     try {
       const response = await axios.post(`${API_URL}/users`, {
         firstName,
@@ -321,6 +331,8 @@ function LoginMenu({ menuOpen, toggleMenu }) {
       } else {
         setRegisterError("שגיאה בהוספת המתפלל.");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -369,6 +381,12 @@ function LoginMenu({ menuOpen, toggleMenu }) {
           <button className="entry-link" onClick={handleOpenMemberModal}>
             כניסת מתפלל
           </button>
+        </div>
+      )}
+
+      {isLoading && (
+        <div className="spinner-overlay">
+          <BeatLoader color="#3498db" loading={true} />
         </div>
       )}
 
