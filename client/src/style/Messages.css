@@ -30,3 +30,21 @@
   font-size: 24px;
   color: #888888;
 }
+.subject-unread {
+  font-weight: bold;
+  color: #000;
+}
+
+.subject-read {
+  font-weight: normal;
+  color: #666;
+}
+.message-item.unread {
+  border-left: 5px solid #007bff; /* קו כחול בולט */
+  background-color: #dadee3;
+  animation: pulse 1s infinite alternate;
+}
+
+.message-item.read {
+  background-color: #fff;
+}

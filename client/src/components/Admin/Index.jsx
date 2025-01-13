@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { List, Typography, Button, Modal, message } from "antd";
+import { List, Typography, Button, Modal, message, Badge } from "antd";
 import axios from "axios";
 import API_URL from "../../config";
-import { InboxOutlined, EyeOutlined, UserOutlined } from "@ant-design/icons";
+import { InboxOutlined, UserOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
@@ -84,7 +84,6 @@ const Index = () => {
         תיבת הודעות
       </Title>
       <List
-        style={{}}
         bordered
         loading={loading}
         dataSource={messages}
@@ -98,6 +97,7 @@ const Index = () => {
               paddingInlineStart: "15px",
               paddingInlineEnd: "4px",
               backgroundColor: message.read_boolean ? "#fff" : "#dadee3",
+              borderRadius: "8px",
               cursor: "pointer",
             }}
             onClick={() => {
@@ -119,22 +119,36 @@ const Index = () => {
           >
             <List.Item.Meta
               avatar={
-                <UserOutlined
-                  className="profile-icon"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: 50,
-                    height: 50,
-                    borderRadius: "50%",
-                    background: "#f0f0f0",
-                    fontSize: 24,
-                    color: "#aaa",
-                  }}
-                />
+                <Badge
+                  dot={!message.read_boolean}
+                  color="blue"
+                  offset={[-10, 0]}
+                >
+                  <UserOutlined
+                    className="profile-icon"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: 50,
+                      height: 50,
+                      borderRadius: "50%",
+                      background: "#f0f0f0",
+                      fontSize: 24,
+                      color: "#aaa",
+                    }}
+                  />
+                </Badge>
               }
-              title={<span className="message-subject">{message.subject}</span>}
+              title={
+                <span
+                  className={`message-subject ${
+                    message.read_boolean ? "subject-read" : "subject-unread"
+                  }`}
+                >
+                  {message.subject}
+                </span>
+              }
               description={
                 <div className="message-meta">
                   <span className="message-sender">
@@ -147,9 +161,6 @@ const Index = () => {
                 </div>
               }
             />
-            {!message.read_boolean && (
-              <EyeOutlined className="unread-indicator" />
-            )}
           </List.Item>
         )}
       />
