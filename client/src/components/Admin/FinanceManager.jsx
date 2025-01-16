@@ -8,21 +8,22 @@ import {
   Input,
   DatePicker,
   Space,
-  Card,
   Typography,
   Row,
   Col,
-  Descriptions,
   message,
-  Spin,
 } from "antd";
-
-import { DownloadOutlined } from "@ant-design/icons";
+import {
+  DownloadOutlined,
+  EditOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import dayjs from "dayjs";
 import "dayjs/locale/he";
 import isBetween from "dayjs/plugin/isBetween";
+import SyncLoader from "react-spinners/SyncLoader";
 import API_URL from "../../config";
 
 dayjs.extend(isBetween);
@@ -35,7 +36,6 @@ const { Title, Text } = Typography;
 const FinanceManager = () => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [currentDetails, setCurrentDetails] = useState(null);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
@@ -43,9 +43,7 @@ const FinanceManager = () => {
   const [editForm] = Form.useForm();
   const [totalIncome, setTotalIncome] = useState(0);
   const [totalExpense, setTotalExpense] = useState(0);
-  const [information, setInformation] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [loadingData, setLoadingData] = useState(false);
   const [startDate, setStartDate] = useState(dayjs().startOf("month"));
   const [endDate, setEndDate] = useState(dayjs().endOf("month"));
   const [dateRange, setDateRange] = useState([
@@ -201,46 +199,6 @@ const FinanceManager = () => {
     }
   }
 
-  const handleDetails = async (record) => {
-    setIsViewModalVisible(true);
-    setLoadingData(true);
-    setInformation(null);
-
-    const originalId = record.original_id;
-
-    const [prefix, id] = originalId.split("_");
-
-    try {
-      if (prefix === "donation") {
-        const response = await axios.get(`${API_URL}/donation`);
-        const data = response.data;
-        const matchedDonation = data.find(
-          (donation) => donation.donation_id === parseInt(id)
-        );
-        if (matchedDonation) {
-          setInformation(matchedDonation);
-        } else {
-          console.warn("No matching donation found for the given ID");
-        }
-      } else if (prefix === "event") {
-        const response = await axios.get(`${API_URL}/eventlist/events`);
-        const data = response.data;
-        const matchedEvent = data.find((event) => event.id === parseInt(id)); // המרת id למספר
-        if (matchedEvent) {
-          setInformation(matchedEvent);
-        } else {
-          console.warn("No matching event found for the given ID");
-        }
-      } else {
-        console.warn("Unsupported prefix in original_id:", prefix);
-      }
-    } catch (error) {
-      console.error("שגיאה בטעינת מידע");
-    } finally {
-      setLoadingData(false);
-    }
-  };
-
   const handleEdit = (record) => {
     setCurrentDetails(record);
     editForm.setFieldsValue({
@@ -340,44 +298,130 @@ const FinanceManager = () => {
     {
       title: "פעולות",
       key: "actions",
-      width: 150,
+      width: 100,
       render: (_, record) => (
-        <Space size="small">
+        <Space size="small" style={{ justifyContent: "center", gap: "2px" }}>
           {!record.readOnly ? (
             <>
-              <div style={{ display: "flex", justifyContent: "flex-start" }}>
-                <Button
-                  size="small"
-                  color="default"
-                  variant="filled"
-                  onClick={() => handleEdit(record)}
-                >
-                  תיקון
-                </Button>
-              </div>
               <Button
-                size="small"
-                color="danger"
-                variant="filled"
+                type="text"
+                icon={<EditOutlined />}
+                onClick={() => handleEdit(record)}
+                style={{ color: "blue" }}
+              />
+              <Button
+                type="text"
+                icon={<DeleteOutlined />}
                 onClick={() => handleDelete(record.id)}
-              >
-                מחק
-              </Button>
+                style={{ color: "red" }}
+              />
             </>
-          ) : (
-            <Button
-              size="small"
-              color="primary"
-              variant="filled"
-              onClick={() => handleDetails(record)}
-            >
-              מידע
-            </Button>
-          )}
+          ) : null}
         </Space>
       ),
     },
   ];
+
+  const ExpandedRow = ({ record }) => {
+    const [loadingData, setLoadingData] = useState(true);
+    const [information, setInformation] = useState(null);
+
+    useEffect(() => {
+      const fetchDetails = async () => {
+        const originalId = record.original_id;
+        const [prefix, id] = originalId.split("_");
+
+        const endpoints = {
+          donation: `${API_URL}/donation`,
+          event: `${API_URL}/eventlist/events`,
+        };
+
+        try {
+          if (endpoints[prefix]) {
+            const response = await axios.get(endpoints[prefix]);
+            const data = response.data;
+
+            const matchedData = data.find((item) =>
+              prefix === "donation"
+                ? item.donation_id === parseInt(id)
+                : item.id === parseInt(id)
+            );
+
+            if (matchedData) {
+              setInformation(matchedData);
+            } else {
+              console.warn(`No matching ${prefix} found for the given ID`);
+            }
+          } else {
+            console.warn("Unsupported prefix in original_id:", prefix);
+          }
+        } catch (error) {
+          console.error("שגיאה בטעינת מידע");
+        } finally {
+          setLoadingData(false);
+        }
+      };
+
+      fetchDetails();
+    }, [record]);
+
+    if (loadingData)
+      return (
+        <div
+          style={{
+            // padding: "5px",
+            paddingRight: "50px",
+            height: "22px",
+          }}
+        >
+          <SyncLoader color="gray" size={10} />
+        </div>
+      );
+
+    if (record.readOnly && information) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            borderRadius: "8px",
+            color: "#666",
+            paddingRight: "50px",
+          }}
+        >
+          <div style={{ width: "33%", padding: "5px 10px" }}>
+            <strong>שם:</strong> {information.first_name || "לא זמין"}{" "}
+            {information.last_name || "לא זמין"}
+          </div>
+          <div style={{ width: "33%", padding: "5px 10px" }}>
+            <strong>אימייל:</strong> {information.email || "לא זמין"}
+          </div>
+          <div style={{ width: "33%", padding: "5px 10px" }}>
+            <strong>טלפון:</strong> {information.phone || "לא זמין"}
+          </div>
+          <div style={{ width: "33%", padding: "5px 10px" }}>
+            <strong>תאריך:</strong>{" "}
+            {information.date
+              ? dayjs(information.date).format("DD/MM/YYYY")
+              : "לא זמין"}
+          </div>
+          <div style={{ width: "33%", padding: "5px 10px" }}>
+            <strong>מטרה:</strong>{" "}
+            {information.purpose || information.eventType || "לא זמין"}
+          </div>
+          <div style={{ width: "33%", padding: "5px 10px" }}>
+            <strong>סכום:</strong> {`${information.amount || 0} ₪`}
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  const expandedRowRender = (record) => {
+    return <ExpandedRow record={record} />;
+  };
 
   return (
     <div style={{ direction: "rtl", padding: "20px" }}>
@@ -426,161 +470,122 @@ const FinanceManager = () => {
         </Button>
       </div>
 
-      <Table
-        columns={columns}
-        dataSource={filteredData}
-        rowKey="id"
-        loading={loading}
-        locale={{ emptyText: "אין נתונים להצגה" }}
-      />
-      <Card
-        bordered={true}
-        loading={loading}
+      <div
         style={{
-          margin: "2px auto",
-          background: "#f7f7f7",
-          borderRadius: "12px",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+          padding: "20px",
+          borderRadius: "10px",
+          backgroundColor: "white",
+          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
         }}
       >
-        {(totalIncome === 0 ||
-          totalIncome === undefined ||
-          isNaN(totalIncome)) &&
-        (totalExpense === 0 ||
-          totalExpense === undefined ||
-          isNaN(totalExpense)) ? (
-          <Title level={5} style={{ textAlign: "center", color: "#888" }}>
-            אין נתונים להצגה
-          </Title>
-        ) : (
-          <>
-            <Title
-              level={4}
+        <Title
+          level={4}
+          style={{
+            textAlign: "center",
+            color: "#4a4a4a",
+            fontWeight: "bold",
+            marginBottom: "20px",
+          }}
+        >
+          הוצאות והכנסות מ-{startDate.format("DD-MM-YYYY")} עד{" "}
+          {endDate.format("DD-MM-YYYY")}
+        </Title>
+
+        <Row justify="center" gutter={[16, 16]}>
+          <Col span={8} style={{ textAlign: "center" }}>
+            <div
               style={{
-                textAlign: "center",
-                color: "#333",
-                fontWeight: "600",
-                marginBottom: "20px",
+                padding: "10px",
+                backgroundColor: "#e8f5e9",
+                borderRadius: "8px",
               }}
             >
-              הוצאות והכנסות מ-{startDate.format("DD-MM-YYYY")} עד{" "}
-              {endDate.format("DD-MM-YYYY")}
-            </Title>
-            <Row gutter={24} justify="center">
-              <Col span={8} style={{ textAlign: "center", padding: "10px" }}>
-                <h3
-                  style={{
-                    color: "#2e7d32",
-                    fontWeight: "600",
-                    fontSize: "18px",
-                  }}
-                >
-                  סה"כ הכנסות:{" "}
-                  <Text
-                    style={{
-                      color: "#2e7d32",
-                      fontWeight: "500",
-                      fontSize: "18px",
-                    }}
-                  >
-                    {totalIncome}
-                  </Text>
-                </h3>
-              </Col>
-              <Col
-                span={8}
+              <Text
                 style={{
-                  textAlign: "center",
-                  padding: "10px",
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                  color: "#388e3c",
                 }}
               >
-                <h3
-                  style={{
-                    color: "#d32f2f",
-                    fontWeight: "600",
-                    fontSize: "18px",
-                  }}
-                >
-                  סה"כ הוצאות:{" "}
-                  <Text
-                    style={{
-                      color: "#d32f2f",
-                      fontWeight: "500",
-                      fontSize: "18px",
-                    }}
-                  >
-                    {totalExpense}-
-                  </Text>
-                </h3>
-              </Col>
-              <Col span={8} style={{ textAlign: "center", padding: "10px" }}>
-                <h3
-                  style={{
-                    color:
-                      totalIncome - totalExpense >= 0 ? "#2e7d32" : "#d32f2f", // צבע שונה לפי יתרה חיובית או שלילית
-                    fontWeight: "600",
-                    fontSize: "18px",
-                  }}
-                >
-                  יתרה:{" "}
-                  <Text
-                    style={{
-                      color:
-                        totalIncome - totalExpense >= 0 ? "#2e7d32" : "#d32f2f",
-                      fontWeight: "500",
-                      fontSize: "18px",
-                    }}
-                  >
-                    {totalIncome - totalExpense < 0
-                      ? `${Math.abs(totalIncome - totalExpense)}-`
-                      : totalIncome - totalExpense}
-                  </Text>
-                </h3>
-              </Col>
-            </Row>
-          </>
-        )}
-      </Card>
+                סה"כ הכנסות
+              </Text>
+              <Text
+                style={{ display: "block", fontSize: "20px", color: "#388e3c" }}
+              >
+                {totalIncome}
+              </Text>
+            </div>
+          </Col>
+          <Col span={8} style={{ textAlign: "center" }}>
+            <div
+              style={{
+                padding: "10px",
+                backgroundColor: "#ffebee",
+                borderRadius: "8px",
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                  color: "#d32f2f",
+                }}
+              >
+                סה"כ הוצאות
+              </Text>
+              <Text
+                style={{ display: "block", fontSize: "20px", color: "#d32f2f" }}
+              >
+                {totalExpense}
+              </Text>
+            </div>
+          </Col>
+          <Col span={8} style={{ textAlign: "center" }}>
+            <div
+              style={{
+                padding: "10px",
+                backgroundColor:
+                  totalIncome - totalExpense >= 0 ? "#e8f5e9" : "#ffebee",
+                borderRadius: "8px",
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                  color:
+                    totalIncome - totalExpense >= 0 ? "#388e3c" : "#d32f2f",
+                }}
+              >
+                יתרה
+              </Text>
+              <Text
+                style={{
+                  display: "block",
+                  fontSize: "20px",
+                  color:
+                    totalIncome - totalExpense >= 0 ? "#388e3c" : "#d32f2f",
+                }}
+              >
+                {Math.abs(totalIncome - totalExpense)}
+              </Text>
+            </div>
+          </Col>
+        </Row>
 
-      {/* מודל הצגת מידע */}
-      <Modal
-        title={`מידע`}
-        visible={isViewModalVisible}
-        onCancel={() => setIsViewModalVisible(false)}
-        footer={null}
-      >
-        {loadingData ? (
-          <div style={{ textAlign: "center", padding: "20px" }}>
-            <Spin tip="טוען נתונים..." />
-          </div>
-        ) : information ? (
-          <Descriptions bordered column={1}>
-            <Descriptions.Item label="שם פרטי">
-              {information.first_name}
-            </Descriptions.Item>
-            <Descriptions.Item label="שם משפחה">
-              {information.last_name}
-            </Descriptions.Item>
-            <Descriptions.Item label="אימייל">
-              {information.email}
-            </Descriptions.Item>
-            <Descriptions.Item label="טלפון">
-              {information.phone}
-            </Descriptions.Item>
-            <Descriptions.Item label="מטרה">
-              {information.purpose || information.eventType}
-            </Descriptions.Item>
-            <Descriptions.Item label="תאריך">
-              {dayjs(information.date).format("DD/MM/YYYY")}
-            </Descriptions.Item>
-            <Descriptions.Item label="סכום">{`${information.amount} ₪`}</Descriptions.Item>
-          </Descriptions>
-        ) : (
-          <Title level={4} style={{ textAlign: "center" }}>
-            אין נתונים להצגה
-          </Title>
-        )}
-      </Modal>
+        <Table
+          columns={columns}
+          dataSource={filteredData}
+          rowKey="id"
+          loading={loading}
+          locale={{ emptyText: "אין נתונים להצגה" }}
+          expandable={{
+            expandedRowRender: expandedRowRender,
+            rowExpandable: (record) => record.readOnly,
+          }}
+          pagination={false}
+        />
+      </div>
 
       {/* מודל הוספת פריט חדש */}
       <Modal
