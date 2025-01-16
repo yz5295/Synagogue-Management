@@ -578,7 +578,11 @@ const FinanceManager = () => {
           dataSource={filteredData}
           rowKey="id"
           loading={loading}
-          locale={{ emptyText: "אין נתונים להצגה" }}
+          locale={{
+            emptyText: "אין נתונים להצגה",
+            filterConfirm: "אישור",
+            filterReset: "איפוס",
+          }}
           expandable={{
             expandedRowRender: expandedRowRender,
             rowExpandable: (record) => record.readOnly,
