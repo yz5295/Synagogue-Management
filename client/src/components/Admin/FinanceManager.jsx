@@ -490,7 +490,7 @@ const FinanceManager = () => {
           הוצאות והכנסות מ-{startDate.format("DD-MM-YYYY")} עד{" "}
           {endDate.format("DD-MM-YYYY")}
         </Title>
-
+        <Skeleton active loading={loading}>
         <Row justify="center" gutter={[16, 16]}>
           <Col span={8} style={{ textAlign: "center" }}>
             <div
@@ -572,7 +572,8 @@ const FinanceManager = () => {
             </div>
           </Col>
         </Row>
-
+        </Skeleton>
+        
         <Table
           columns={columns}
           dataSource={filteredData}
