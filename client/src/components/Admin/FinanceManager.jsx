@@ -12,6 +12,7 @@ import {
   Row,
   Col,
   message,
+  Skeleton,
 } from "antd";
 import {
   DownloadOutlined,
@@ -491,89 +492,97 @@ const FinanceManager = () => {
           {endDate.format("DD-MM-YYYY")}
         </Title>
         <Skeleton active loading={loading}>
-        <Row justify="center" gutter={[16, 16]}>
-          <Col span={8} style={{ textAlign: "center" }}>
-            <div
-              style={{
-                padding: "10px",
-                backgroundColor: "#e8f5e9",
-                borderRadius: "8px",
-              }}
-            >
-              <Text
+          <Row justify="center" gutter={[16, 16]}>
+            <Col span={8} style={{ textAlign: "center" }}>
+              <div
                 style={{
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                  color: "#388e3c",
+                  padding: "10px",
+                  backgroundColor: "#e8f5e9",
+                  borderRadius: "8px",
                 }}
               >
-                סה"כ הכנסות
-              </Text>
-              <Text
-                style={{ display: "block", fontSize: "20px", color: "#388e3c" }}
-              >
-                {totalIncome}
-              </Text>
-            </div>
-          </Col>
-          <Col span={8} style={{ textAlign: "center" }}>
-            <div
-              style={{
-                padding: "10px",
-                backgroundColor: "#ffebee",
-                borderRadius: "8px",
-              }}
-            >
-              <Text
+                <Text
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                    color: "#388e3c",
+                  }}
+                >
+                  סה"כ הכנסות
+                </Text>
+                <Text
+                  style={{
+                    display: "block",
+                    fontSize: "20px",
+                    color: "#388e3c",
+                  }}
+                >
+                  {totalIncome}
+                </Text>
+              </div>
+            </Col>
+            <Col span={8} style={{ textAlign: "center" }}>
+              <div
                 style={{
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                  color: "#d32f2f",
+                  padding: "10px",
+                  backgroundColor: "#ffebee",
+                  borderRadius: "8px",
                 }}
               >
-                סה"כ הוצאות
-              </Text>
-              <Text
-                style={{ display: "block", fontSize: "20px", color: "#d32f2f" }}
-              >
-                {totalExpense}
-              </Text>
-            </div>
-          </Col>
-          <Col span={8} style={{ textAlign: "center" }}>
-            <div
-              style={{
-                padding: "10px",
-                backgroundColor:
-                  totalIncome - totalExpense >= 0 ? "#e8f5e9" : "#ffebee",
-                borderRadius: "8px",
-              }}
-            >
-              <Text
+                <Text
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                    color: "#d32f2f",
+                  }}
+                >
+                  סה"כ הוצאות
+                </Text>
+                <Text
+                  style={{
+                    display: "block",
+                    fontSize: "20px",
+                    color: "#d32f2f",
+                  }}
+                >
+                  {totalExpense}
+                </Text>
+              </div>
+            </Col>
+            <Col span={8} style={{ textAlign: "center" }}>
+              <div
                 style={{
-                  fontSize: "16px",
-                  fontWeight: "bold",
-                  color:
-                    totalIncome - totalExpense >= 0 ? "#388e3c" : "#d32f2f",
+                  padding: "10px",
+                  backgroundColor:
+                    totalIncome - totalExpense >= 0 ? "#e8f5e9" : "#ffebee",
+                  borderRadius: "8px",
                 }}
               >
-                יתרה
-              </Text>
-              <Text
-                style={{
-                  display: "block",
-                  fontSize: "20px",
-                  color:
-                    totalIncome - totalExpense >= 0 ? "#388e3c" : "#d32f2f",
-                }}
-              >
-                {Math.abs(totalIncome - totalExpense)}
-              </Text>
-            </div>
-          </Col>
-        </Row>
+                <Text
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                    color:
+                      totalIncome - totalExpense >= 0 ? "#388e3c" : "#d32f2f",
+                  }}
+                >
+                  יתרה
+                </Text>
+                <Text
+                  style={{
+                    display: "block",
+                    fontSize: "20px",
+                    color:
+                      totalIncome - totalExpense >= 0 ? "#388e3c" : "#d32f2f",
+                  }}
+                >
+                  {Math.abs(totalIncome - totalExpense)}
+                </Text>
+              </div>
+            </Col>
+          </Row>
         </Skeleton>
-        
+
         <Table
           columns={columns}
           dataSource={filteredData}
